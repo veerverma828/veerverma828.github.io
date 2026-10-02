@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Github, Linkedin, Send, CheckCircle2, AlertCircle, RefreshCw, Copy, Check, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { personalInfo } from '../data';
+import { openGmailCompose } from '../utils/gmail';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -33,8 +34,7 @@ export default function Contact() {
   const handleOpenGmail = () => {
     const subjectLine = formData.subject.trim() ? formData.subject.trim() : `Portfolio Contact from ${formData.name.trim() || 'Visitor'}`;
     const mailBody = `Name: ${formData.name.trim()}\nEmail: ${formData.email.trim()}\nSubject: ${subjectLine}\n\nMessage:\n${formData.message.trim()}`;
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(personalInfo.email)}&su=${encodeURIComponent(subjectLine)}&body=${encodeURIComponent(mailBody)}`;
-    window.open(gmailUrl, '_blank', 'noopener,noreferrer');
+    openGmailCompose({ to: personalInfo.email, subject: subjectLine, body: mailBody });
   };
 
   const handleFormSubmit = async (e: React.FormEvent) => {
@@ -192,6 +192,10 @@ export default function Contact() {
                       href={`https://mail.google.com/mail/?view=cm&fs=1&to=${personalInfo.email}`}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        openGmailCompose({ to: personalInfo.email });
+                      }}
                       className="px-2 py-1 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-white/10 transition-colors flex items-center space-x-1"
                     >
                       <ExternalLink className="w-3 h-3 text-emerald-400" />
