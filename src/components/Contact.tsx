@@ -12,6 +12,7 @@ export default function Contact() {
   });
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const [honeypot, setHoneypot] = useState('');
   const [copiedEmail, setCopiedEmail] = useState(false);
 
   const handleCopyEmail = () => {
@@ -38,7 +39,13 @@ export default function Contact() {
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
+    // Honeypot: real visitors never fill this hidden field, bots do
+    if (honeypot) {
+      setStatus('success');
+      return;
+    }
+
     // Client validations
     if (!formData.name.trim()) {
       setStatus('error');
@@ -82,17 +89,15 @@ export default function Contact() {
 
       const resData = await response.json().catch(() => null);
 
-      if (response.ok && (resData?.success === 'true' || resData?.success === true || resData?.message)) {
+      if (response.ok && (resData?.success === 'true' || resData?.success === true)) {
         setStatus('success');
       } else {
-        // Fallback: Open Gmail compose with pre-filled details
-        handleOpenGmail();
-        setStatus('success');
+        setStatus('error');
+        setErrorMessage("Your message couldn't be sent. Please try again or use the Gmail button below.");
       }
     } catch {
-      // Fallback on network/cors: Open Gmail compose tab directly
-      handleOpenGmail();
-      setStatus('success');
+      setStatus('error');
+      setErrorMessage("Network error: your message wasn't sent. Please try again or use the Gmail button below.");
     }
   };
 
@@ -319,6 +324,18 @@ export default function Contact() {
                         <span>{errorMessage}</span>
                       </div>
                     )}
+
+                    {/* Honeypot field (hidden from humans) */}
+                    <input
+                      type="text"
+                      name="_honey"
+                      value={honeypot}
+                      onChange={(e) => setHoneypot(e.target.value)}
+                      tabIndex={-1}
+                      autoComplete="off"
+                      aria-hidden="true"
+                      className="hidden"
+                    />
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {/* Name field */}
