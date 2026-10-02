@@ -184,10 +184,12 @@ export default function Header({ darkMode, setDarkMode, onOpenResume }: HeaderPr
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.25, ease: 'easeInOut' }}
+            // Don't animate height: 'auto' here. motion measures it by calling
+            // window.scrollTo(0, 0), which cancels the smooth scroll started by a menu tap.
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: 'easeInOut' }}
             className="md:hidden bg-[#0c0c0c] border-b border-white/10"
           >
             <div className="px-4 pt-2 pb-6 space-y-2">
