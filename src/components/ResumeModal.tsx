@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { X, Download, ExternalLink, FileText } from 'lucide-react';
 
 interface ResumeModalProps {
@@ -9,6 +9,23 @@ interface ResumeModalProps {
 const RESUME_URL = '/Veer_Verma_Resume.pdf';
 
 export default function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
+  // Give the modal its own history entry so the browser/phone Back button closes it
+  // instead of leaving the site.
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
+  useEffect(() => {
+    if (!isOpen) return;
+    window.history.pushState({ resumeModal: true }, '');
+    const handlePopState = () => onCloseRef.current();
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      // Closed via X / Esc / backdrop: drop the entry we added. (If Back closed it, it's already gone.)
+      if (window.history.state?.resumeModal) window.history.back();
+    };
+  }, [isOpen]);
+
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
