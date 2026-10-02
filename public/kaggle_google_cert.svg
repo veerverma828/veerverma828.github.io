@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="100%" height="100%">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800;900&amp;display=swap');
+      .font-main { font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; }
+    </style>
+  </defs>
+
+  <!-- Base Canvas (White) -->
+  <rect width="1200" height="675" fill="#FFFFFF" />
+
+  <!-- Right Side Soft Fluid Organic Gray Wave Shapes -->
+  <g opacity="0.95">
+    <path d="M 680 0 Q 720 180 840 250 Q 960 320 1020 480 Q 1060 580 1200 620 L 1200 0 Z" fill="#EEF2F6" />
+    <path d="M 780 0 Q 820 120 920 180 Q 1040 240 1080 380 Q 1120 480 1200 520 L 1200 0 Z" fill="#E2E8F0" opacity="0.45" />
+  </g>
+
+  <!-- Thick Black Outer Border Frame -->
+  <rect x="40" y="40" width="1120" height="595" fill="none" stroke="#0F172A" stroke-width="8" rx="14" />
+
+  <!-- Top Left: Kaggle | Google Logos (Perfectly Baseline Aligned) -->
+  <g transform="translate(130, 130)" className="font-main">
+    <!-- Kaggle Logo (lowercase, sky blue) -->
+    <text x="0" y="48" font-family="'Plus Jakarta Sans', sans-serif" font-size="52" font-weight="800" fill="#20BEFF" letter-spacing="-1.5px">kaggle</text>
+    
+    <!-- Vertical Divider Line -->
+    <line x1="205" y1="10" x2="205" y2="54" stroke="#94A3B8" stroke-width="2.5" opacity="0.7" />
+
+    <!-- Google Logo on same baseline (y=48) -->
+    <text x="235" y="48" font-family="'Plus Jakarta Sans', sans-serif" font-size="48" font-weight="700" letter-spacing="-0.5px">
+      <tspan fill="#4285F4">G</tspan>
+      <tspan fill="#EA4335">o</tspan>
+      <tspan fill="#FBBC05">o</tspan>
+      <tspan fill="#4285F4">g</tspan>
+      <tspan fill="#34A853">l</tspan>
+      <tspan fill="#EA4335">e</tspan>
+    </text>
+  </g>
+
+  <!-- Top Right Hexagonal Badge Icon -->
+  <g transform="translate(900, 130)">
+    <!-- Outer Hexagon Shadow / Border -->
+    <path d="M 65 0 L 130 38 L 130 112 L 65 150 L 0 112 L 0 38 Z" fill="#5B21B6" />
+    <path d="M 65 5 L 125 40 L 125 110 L 65 145 L 5 110 L 5 40 Z" fill="#A78BFA" />
+    <path d="M 65 10 L 120 42 L 120 108 L 65 140 L 10 108 L 10 42 Z" fill="#DDD6FE" />
+
+    <!-- Turntable DJ Graphic inside Badge -->
+    <g transform="translate(28, 38)">
+      <!-- Disc base -->
+      <ellipse cx="37" cy="45" rx="32" ry="18" fill="#1E1B4B" stroke="#5B21B6" stroke-width="2.5" />
+      <ellipse cx="37" cy="45" rx="24" ry="13" fill="none" stroke="#C4B5FD" stroke-width="2" />
+      <ellipse cx="37" cy="45" rx="14" ry="7" fill="none" stroke="#8B5CF6" stroke-width="1.5" />
+      <circle cx="37" cy="45" r="4" fill="#DDD6FE" />
+      
+      <!-- Sparkles Top Left inside badge -->
+      <path d="M 22 18 L 24 12 L 26 18 L 32 20 L 26 22 L 24 28 L 22 22 L 16 20 Z" fill="#0F172A" />
+      <path d="M 46 14 L 47.5 10 L 49 14 L 53 15.5 L 49 17 L 47.5 21 L 46 17 L 42 15.5 Z" fill="#0F172A" />
+
+      <!-- Hand/Vibe DJ Arm Scratching Record -->
+      <path d="M 52 22 C 58 20, 62 26, 56 32 C 50 38, 42 38, 39 42" fill="none" stroke="#0F172A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M 52 22 C 58 20, 62 26, 56 32 C 50 38, 42 38, 39 42" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    </g>
+  </g>
+
+  <!-- THIS CERTIFIES THAT -->
+  <g transform="translate(130, 288)" className="font-main">
+    <text font-size="13" font-weight="800" fill="#64748B" letter-spacing="1.8px">THIS CERTIFIES THAT</text>
+  </g>
+
+  <!-- Veer Verma -->
+  <g transform="translate(130, 350)" className="font-main">
+    <text font-size="58" font-weight="900" fill="#0F172A" letter-spacing="-1px">Veer Verma</text>
+  </g>
+
+  <!-- HAS SUCCESSFULLY EARNED THE BADGE -->
+  <g transform="translate(130, 392)" className="font-main">
+    <text font-size="13" font-weight="800" fill="#64748B" letter-spacing="1.8px">HAS SUCCESSFULLY EARNED THE BADGE</text>
+  </g>
+
+  <!-- 5-Day AI Agents: Intensive Vibe Coding Course -->
+  <g transform="translate(130, 508)" className="font-main">
+    <text font-size="36" font-weight="800" fill="#0F172A" letter-spacing="-0.8px">5-Day AI Agents: Intensive Vibe Coding Course</text>
+    <!-- Underline divider -->
+    <line x1="0" y1="18" x2="830" y2="18" stroke="#CBD5E1" stroke-width="2" />
+  </g>
+
+  <!-- ON JULY 30, 2026 -->
+  <g transform="translate(130, 562)" className="font-main">
+    <text font-size="13" font-weight="800" fill="#64748B" letter-spacing="1.5px">ON JULY 30, 2026</text>
+  </g>
+</svg>

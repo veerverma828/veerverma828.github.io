@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --color-emerald-50: #effdf5;
+  --color-emerald-100: #d1fae5;
+  --color-emerald-200: #a7f3d0;
+  --color-emerald-300: #6ee7b7;
+  --color-emerald-400: #34d399;
+  --color-emerald-500: #10b981;
+  --color-emerald-600: #059669;
+  --color-emerald-700: #047857;
+  --color-emerald-800: #065f46;
+  --color-emerald-900: #064e3b;
+  --color-emerald-950: #022c22;
+}
+
+@layer base {
+  body {
+    background-color: #050505;
+    color: #ffffff;
+    font-family: var(--font-sans);
+  }
+}
+
+/* Custom scrollbars and modern layout helpers matching Geometric Balance scale */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+::-webkit-scrollbar-thumb {
+  background: #1f2937;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #10b981;
+}
+
+/* Custom subtle styles */
+.geo-border {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.geo-btn {
+  @apply relative overflow-hidden transition-colors duration-200 font-bold uppercase tracking-wider text-xs px-5 py-3 rounded-none;
+}
+
+.geo-btn-primary {
+  @apply bg-emerald-500 text-black hover:bg-emerald-400 active:bg-emerald-600;
+}
+
+.geo-btn-secondary {
+  @apply border border-white/20 text-white hover:bg-white/5 active:bg-white/10;
+}
