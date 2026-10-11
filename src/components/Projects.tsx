@@ -346,11 +346,6 @@ export default function Projects() {
                 
                 {/* Visual Mockup Container (Interactive SVG replacement for images) */}
                 <div className="p-4 bg-zinc-950 rounded-none relative overflow-hidden border-b border-white/5">
-                  <div className="absolute top-2 left-2 z-10">
-                    <span className="text-[8px] font-black uppercase tracking-widest font-mono px-2 py-0.5 rounded-none bg-emerald-500 text-black">
-                      {project.category}
-                    </span>
-                  </div>
                   {renderVisualMockup(project.imagePlaceholder, project.title)}
                 </div>
 
