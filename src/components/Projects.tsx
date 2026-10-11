@@ -270,6 +270,46 @@ export default function Projects() {
           </div>
         );
 
+      case 'querywise':
+        return (
+          <div className="w-full h-48 bg-[#0B0D14] rounded-xl relative p-3 overflow-hidden flex flex-col border border-slate-800/60 font-sans">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] font-bold text-white tracking-wide">Querywise</span>
+              <span className="text-[5px] font-mono text-emerald-400 border border-emerald-900 bg-emerald-950/30 px-1.5 py-0.5 rounded-full">LOCAL · QWEN 2.5 7B</span>
+            </div>
+
+            {/* User message */}
+            <div className="self-end max-w-[75%] bg-emerald-600/90 text-white text-[7px] px-2 py-1 rounded-md mb-1.5">
+              Research RAG evaluation and save a report
+            </div>
+
+            {/* Agent step timeline */}
+            <div className="space-y-1 mb-1.5">
+              <div className="flex items-center space-x-1.5 border border-slate-800 bg-[#0F111A] rounded px-1.5 py-1">
+                <Search className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
+                <span className="text-[6px] text-slate-300 font-mono flex-1 truncate">web_search("RAG evaluation metrics")</span>
+                <Check className="w-2.5 h-2.5 text-emerald-500 shrink-0" />
+              </div>
+              <div className="flex items-center space-x-1.5 border border-slate-800 bg-[#0F111A] rounded px-1.5 py-1">
+                <FileText className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
+                <span className="text-[6px] text-slate-300 font-mono flex-1 truncate">search_documents(top_k=2)</span>
+                <Check className="w-2.5 h-2.5 text-emerald-500 shrink-0" />
+              </div>
+            </div>
+
+            {/* Approval card */}
+            <div className="mt-auto border border-amber-700/40 bg-amber-950/10 rounded-md p-1.5">
+              <div className="text-[6px] font-bold text-amber-300 mb-1">Approval needed: save_report</div>
+              <div className="flex space-x-1">
+                <span className="text-[6px] font-bold text-black bg-emerald-500 px-2 py-0.5 rounded">Approve</span>
+                <span className="text-[6px] font-bold text-slate-300 border border-slate-700 px-2 py-0.5 rounded">Edit</span>
+                <span className="text-[6px] font-bold text-slate-300 border border-slate-700 px-2 py-0.5 rounded">Reject</span>
+              </div>
+            </div>
+          </div>
+        );
+
       default:
         return (
           <div className="w-full h-48 bg-slate-900 rounded-xl flex items-center justify-center">
@@ -395,16 +435,26 @@ export default function Projects() {
 
                   {/* Actions Link Row */}
                   <div className="flex items-center space-x-3 pt-3">
-                    <a
-                      href={project.liveUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      referrerPolicy="no-referrer"
-                      className="flex-1 flex items-center justify-center space-x-1.5 px-3 py-2 bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold uppercase tracking-wider rounded-none transition-all duration-200"
-                    >
-                      <span>Live Demo</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
+                    {project.liveUrl ? (
+                      <a
+                        href={project.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        referrerPolicy="no-referrer"
+                        className="flex-1 flex items-center justify-center space-x-1.5 px-3 py-2 bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold uppercase tracking-wider rounded-none transition-all duration-200"
+                      >
+                        <span>Live Demo</span>
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                    ) : (
+                      <span
+                        aria-disabled="true"
+                        className="flex-1 flex items-center justify-center space-x-1.5 px-3 py-2 bg-zinc-900 border border-white/10 text-zinc-500 text-xs font-bold uppercase tracking-wider rounded-none cursor-not-allowed select-none"
+                      >
+                        <Clock className="w-3.5 h-3.5" />
+                        <span>Coming Soon..</span>
+                      </span>
+                    )}
                     {project.githubUrl && (
                       <a
                         href={project.githubUrl}
