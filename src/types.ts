@@ -12,7 +12,7 @@ export interface Project {
   title: string;
   description: string;
   longDescription?: string;
-  liveUrl: string;
+  liveUrl?: string;
   githubUrl?: string;
   tags: string[];
   keyHighlights: string[];

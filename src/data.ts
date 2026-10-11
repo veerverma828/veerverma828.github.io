@@ -312,23 +312,6 @@ export const projects: Project[] = [
     imagePlaceholder: 'movie-discovery'
   },
   {
-    id: 'doc-booking',
-    title: 'Doctor Appointment Booking System',
-    category: 'AI Systems',
-    description: 'Healthcare platform with AI-guided patient symptom triage, dynamic doctor scheduling, and automated clinical log summaries.',
-    liveUrl: 'https://myproject-sljk.onrender.com',
-    githubUrl: 'https://github.com/veerverma828/DocBook',
-    tags: ['MERN Stack', 'AI Symptom Triage', 'MongoDB', 'Node.js', 'Express', 'React'],
-    keyHighlights: [
-      'AI patient symptom triage & intake assistant',
-      'Dynamic doctor dashboard for logs & status tracking',
-      'Automated patient appointment scheduling & reminders',
-      'Custom practitioner profile management',
-      'Real-time slot availability toggles'
-    ],
-    imagePlaceholder: 'doctor-booking'
-  },
-  {
     id: 'resume-maker',
     title: 'ResumeCraft - A Resume Maker',
     category: 'AI Systems',
@@ -361,6 +344,39 @@ export const projects: Project[] = [
       'Responsive design across mobile and desktop devices'
     ],
     imagePlaceholder: 'nova-share'
+  },
+  {
+    id: 'doc-booking',
+    title: 'Doctor Appointment Booking System',
+    category: 'AI Systems',
+    description: 'Healthcare platform with AI-guided patient symptom triage, dynamic doctor scheduling, and automated clinical log summaries.',
+    liveUrl: 'https://myproject-sljk.onrender.com',
+    githubUrl: 'https://github.com/veerverma828/DocBook',
+    tags: ['MERN Stack', 'AI Symptom Triage', 'MongoDB', 'Node.js', 'Express', 'React'],
+    keyHighlights: [
+      'AI patient symptom triage & intake assistant',
+      'Dynamic doctor dashboard for logs & status tracking',
+      'Automated patient appointment scheduling & reminders',
+      'Custom practitioner profile management',
+      'Real-time slot availability toggles'
+    ],
+    imagePlaceholder: 'doctor-booking'
+  },
+  {
+    id: 'querywise',
+    title: 'Querywise - AI Research Agent',
+    category: 'AI Systems',
+    description: 'A local-first agentic RAG assistant that answers from your documents and the live web, shows its work step by step, and asks for your approval before it acts.',
+    githubUrl: 'https://github.com/veerverma828/AI-Assistant-Querywise',
+    tags: ['Agentic RAG', 'Ollama', 'FastAPI', 'React', 'ChromaDB', 'SSE Streaming'],
+    keyHighlights: [
+      'Grounded document Q&A with sources over PDFs and text files',
+      'ReAct-style agent choosing between document search, web search and report tools',
+      'Live step-by-step agent trace streamed over Server-Sent Events',
+      'Human-in-the-loop approval before saving reports',
+      'Runs fully local: Qwen 2.5 7B and embeddings via Ollama, vectors in ChromaDB'
+    ],
+    imagePlaceholder: 'querywise'
   }
 ];
 
