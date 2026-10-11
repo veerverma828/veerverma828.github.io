@@ -299,7 +299,7 @@ export const projects: Project[] = [
     category: 'AI Systems',
     description: 'An AI-powered media intelligence platform integrating LLM content summarization, semantic search, torrent discovery, and debounced query management.',
     liveUrl: 'https://torrent-gamma.vercel.app',
-    githubUrl: 'https://github.com/veerverma828/torrent-gamma',
+    githubUrl: 'https://github.com/veerverma828/Media-discovery-streaming-platform',
     tags: ['LLM Summarization', 'Vector Search', 'React', 'Node.js', 'Express', 'TMDb API'],
     keyHighlights: [
       'AI-driven content recommendations & episode intelligence',
@@ -317,7 +317,7 @@ export const projects: Project[] = [
     category: 'AI Systems',
     description: 'Healthcare platform with AI-guided patient symptom triage, dynamic doctor scheduling, and automated clinical log summaries.',
     liveUrl: 'https://myproject-sljk.onrender.com',
-    githubUrl: 'https://github.com/veerverma828/doctor-appointment',
+    githubUrl: 'https://github.com/veerverma828/DocBook',
     tags: ['MERN Stack', 'AI Symptom Triage', 'MongoDB', 'Node.js', 'Express', 'React'],
     keyHighlights: [
       'AI patient symptom triage & intake assistant',
