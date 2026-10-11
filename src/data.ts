@@ -295,7 +295,7 @@ export const skills: Skill[] = [
 export const projects: Project[] = [
   {
     id: 'media-streamer',
-    title: 'Multimodal AI Discovery & Intelligence Platform',
+    title: 'Media Discovery and Streaming Platform',
     category: 'AI Systems',
     description: 'An AI-powered media intelligence platform integrating LLM content summarization, semantic search, torrent discovery, and debounced query management.',
     liveUrl: 'https://torrent-gamma.vercel.app',
@@ -313,7 +313,7 @@ export const projects: Project[] = [
   },
   {
     id: 'doc-booking',
-    title: 'Clinical AI Assistant & Doctor Appointment System',
+    title: 'Doctor Appointment Booking System',
     category: 'AI Systems',
     description: 'Healthcare platform with AI-guided patient symptom triage, dynamic doctor scheduling, and automated clinical log summaries.',
     liveUrl: 'https://myproject-sljk.onrender.com',
@@ -330,7 +330,7 @@ export const projects: Project[] = [
   },
   {
     id: 'resume-maker',
-    title: 'AI Resume & Career Intelligence Engine',
+    title: 'ResumeCraft - A Resume Maker',
     category: 'AI Systems',
     description: 'An intelligent visual resume architect with AI optimization recommendations, instant ATS formatting checks, and live PDF exports.',
     liveUrl: 'https://veerverma828.github.io/Resume-Maker/',
@@ -347,7 +347,7 @@ export const projects: Project[] = [
   },
   {
     id: 'nova-share',
-    title: 'Nova AI Neural File Intelligence & Sharing Platform',
+    title: 'Nova Share - A File Sharing Platform',
     category: 'Utility',
     description: 'A peer-to-peer file transfer system featuring automated AI file content classification, instant document summaries, and secure links.',
     liveUrl: 'https://veerverma828.github.io/novashare/',
