@@ -6,7 +6,7 @@ export default function About() {
   const stats = [
     { label: 'CGPA', value: '7.72', description: 'MIET Meerut', icon: Award },
     { label: 'Degree', value: 'B.Tech CSE(DS)', description: '2021 – 2025', icon: Calendar },
-    { label: 'Key Projects', value: '4 Main', description: 'AI & Full Stack', icon: Star },
+    { label: 'Key Projects', value: '5+ Main', description: 'AI & Full Stack', icon: Star },
     { label: 'Main Focus', value: 'AI Engineering', description: 'LLMs, Agents, RAG', icon: Brain },
   ];
 
