@@ -1,16 +1,10 @@
-import React, { useState } from 'react';
-import { ExternalLink, Github, FolderGit2, Check, Tv, Calendar, FileText, Play, Plus, Clock, FileCheck, Award, Upload, Settings, Search, ArrowRight, Star, Info } from 'lucide-react';
+import React from 'react';
+import { ExternalLink, Github, FolderGit2, Check, Clock, FileCheck, Upload, Settings, Search, ArrowRight, Star, Info, Play, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { projects, personalInfo } from '../data';
 import { Project } from '../types';
 
 export default function Projects() {
-  const [activeTab, setActiveTab] = useState<'All' | 'AI Systems' | 'Full Stack' | 'Utility'>('All');
-
-  const filteredProjects = projects.filter((project) => {
-    if (activeTab === 'All') return true;
-    return project.category === activeTab;
-  });
 
   // Pure CSS Render helper for Premium Visual Mockup
   const renderVisualMockup = (placeholderType: string, title: string) => {
@@ -349,32 +343,13 @@ export default function Projects() {
           <div className="w-16 h-[2px] bg-emerald-500 mx-auto mt-4" />
         </div>
 
-        {/* Tab Selection Row */}
-        <div className="w-full overflow-x-auto pb-2 sm:pb-0 mb-8 sm:mb-12 scrollbar-none touch-pan-x">
-          <div className="flex sm:flex-wrap items-center sm:justify-center gap-2.5 min-w-max sm:min-w-0 px-1">
-            {['All', 'AI Systems', 'Full Stack', 'Utility'].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab as any)}
-                className={`px-5 py-2.5 rounded-none text-xs font-bold uppercase tracking-widest transition-all cursor-pointer min-h-[44px] flex items-center justify-center touch-manipulation active:scale-95 whitespace-nowrap ${
-                  activeTab === tab
-                    ? 'bg-emerald-500 text-black shadow-md font-extrabold'
-                    : 'bg-zinc-900 text-zinc-400 border border-white/10 hover:bg-zinc-800 hover:text-white'
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-        </div>
-
         {/* Projects Cards Grid */}
         <motion.div
           layout
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch"
         >
           <AnimatePresence>
-            {filteredProjects.map((project: Project) => (
+            {projects.map((project: Project) => (
               <motion.div
                 initial={{ opacity: 0, scale: 0.96 }}
                 animate={{ opacity: 1, scale: 1 }}
