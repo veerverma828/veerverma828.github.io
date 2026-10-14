@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 
 interface IntroLoaderProps {
   onDone: () => void;
+  /** true once the 3D bot has drawn its first frames (or there is nothing to wait for). */
+  botReady?: boolean;
 }
 
 type Phase = 'loading' | 'complete' | 'expand';
 
 // How much of the bar each real loading signal is worth. They sum to 100.
-const WEIGHTS = { dom: 20, fonts: 40, load: 40 } as const;
+const WEIGHTS = { dom: 15, fonts: 25, load: 20, bot: 40 } as const;
 type Signal = keyof typeof WEIGHTS;
 
 /** 0 = always show the intro (it plays once per tab session, see App.tsx). */
@@ -23,13 +25,14 @@ const HARD_CAP_MS = 8000;
  * skipped outright, otherwise the bar finishes the moment loading does and a
  * short reveal hands over to the hero.
  */
-export default function IntroLoader({ onDone }: IntroLoaderProps) {
+export default function IntroLoader({ onDone, botReady = false }: IntroLoaderProps) {
   const [percent, setPercent] = useState(0);
   const [phase, setPhase] = useState<Phase>('loading');
   const [skipped, setSkipped] = useState(false);
   // Stays hidden until loading has genuinely taken a moment, so quick loads never flash it.
   const [visible, setVisible] = useState(false);
   const target = useRef(0);
+  const markRef = useRef<((s: Signal) => void) | null>(null);
   const startRef = useRef(performance.now());
   const doneRef = useRef(false);
   const pillRef = useRef<HTMLDivElement>(null);
@@ -65,6 +68,8 @@ export default function IntroLoader({ onDone }: IntroLoaderProps) {
       }
     };
 
+    markRef.current = mark;
+
     // DOM: this component only mounts once the app script has run.
     mark('dom');
 
@@ -78,6 +83,7 @@ export default function IntroLoader({ onDone }: IntroLoaderProps) {
     const cap = window.setTimeout(() => {
       mark('fonts');
       mark('load');
+      mark('bot');
     }, HARD_CAP_MS);
     return () => {
       window.clearTimeout(reveal);
@@ -85,6 +91,11 @@ export default function IntroLoader({ onDone }: IntroLoaderProps) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // The 3D bot reports in when its first frames are on screen (behind the loader).
+  useEffect(() => {
+    if (botReady) markRef.current?.('bot');
+  }, [botReady]);
 
   // Smoothly chase the real progress; catches up fast, never invents progress.
   useEffect(() => {

@@ -439,7 +439,17 @@ export function Bot({
   );
 }
 
-export default function HeroBot() {
+/** Calls onReady once, after the first few frames are drawn (shaders compiled, scene on the GPU). */
+function ReadyProbe({ onReady }: { onReady?: () => void }) {
+  const frames = useRef(0);
+  useFrame(() => {
+    frames.current += 1;
+    if (frames.current === 3) onReady?.();
+  });
+  return null;
+}
+
+export default function HeroBot({ onReady }: { onReady?: () => void }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const pointer = useRef<Pointer>({ x: 0, y: 0 });
   const [inView, setInView] = useState(true);
@@ -499,6 +509,7 @@ export default function HeroBot() {
         <directionalLight position={[-4, 2, -3]} color="#10b981" intensity={2.4} />
         <pointLight position={[0, 0.4, 3.2]} color="#34d399" intensity={6} distance={7} />
         <Bot pointer={pointer} live={!reduceMotion} />
+        <ReadyProbe onReady={onReady} />
       </Canvas>
     </div>
   );

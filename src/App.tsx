@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Suspense, lazy, useEffect, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { MotionConfig } from 'motion/react';
 import Header from './components/Header';
@@ -13,6 +13,7 @@ import ResumeModal from './components/ResumeModal';
 import ScrollProgress from './components/ui/ScrollProgress';
 import IntroLoader from './components/ui/IntroLoader';
 import AgentCursor from './components/ui/AgentCursor';
+import { hasWebGL } from './utils/webgl';
 
 // Everything below the fold is split out of the first bundle so the intro and hero paint sooner.
 const About = lazy(() => import('./components/About'));
@@ -46,7 +47,12 @@ function shouldSkipIntro(): boolean {
 
 export default function App() {
   const [resumeOpen, setResumeOpen] = useState<boolean>(false);
-  const [introDone, setIntroDone] = useState<boolean>(shouldSkipIntro);
+  // Decided once: does the intro play this visit?
+  const [introWillRun] = useState<boolean>(() => !shouldSkipIntro());
+  const [introDone, setIntroDone] = useState<boolean>(!introWillRun);
+  // The loader's last signal: the 3D bot has drawn its first frames (or there is no WebGL to wait for).
+  const [botReady, setBotReady] = useState<boolean>(() => !hasWebGL());
+  const handleBotReady = useCallback(() => setBotReady(true), []);
 
   // Fetch the 3D chunk while the intro plays, so the bot is ready when the hero appears.
   useEffect(() => {
@@ -80,17 +86,18 @@ export default function App() {
       </a>
 
       <AgentCursor />
-      {!introDone && <IntroLoader onDone={handleIntroDone} />}
+      {!introDone && <IntroLoader onDone={handleIntroDone} botReady={botReady} />}
       <ScrollProgress />
       <Header onOpenResume={() => setResumeOpen(true)} />
 
       <main id="main" className="relative">
-        {/* Hero mounts after the intro so its entrance animations play on reveal */}
-        {introDone ? (
-          <Hero onOpenResume={() => setResumeOpen(true)} />
-        ) : (
-          <section id="hero" aria-hidden="true" className="min-h-screen" />
-        )}
+        {/* Mounted from the start so the 3D bot can prepare while the intro runs; the text waits for `play` */}
+        <Hero
+          onOpenResume={() => setResumeOpen(true)}
+          play={introDone}
+          earlyBot={introWillRun}
+          onBotReady={handleBotReady}
+        />
         <LazySection id="about"><About /></LazySection>
         <LazySection id="skills"><Skills /></LazySection>
         <LazySection id="projects"><Projects /></LazySection>
