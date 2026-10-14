@@ -33,6 +33,106 @@ function RoundedBox({
 }
 
 const EMERALD = '#34d399';
+/** What the bot types, as [text, colour] segments per line. */
+const TERMINAL_SCRIPT: Array<Array<[string, string]>> = [
+  [['// welcome.ts', '#6b7280']],
+  [['say', '#22d3ee'], ['(', '#e5e7eb'], ['"Hi,"', '#fbbf24'], [');', '#e5e7eb']],
+  [['say', '#22d3ee'], ['(', '#e5e7eb'], ['"welcome to"', '#fbbf24'], [');', '#e5e7eb']],
+  [['say', '#22d3ee'], ['(', '#e5e7eb'], ['"my portfolio!"', '#fbbf24'], [');', '#e5e7eb']],
+  [['> ', '#34d399'], ['Hi, welcome to', '#ffffff']],
+  [['> ', '#34d399'], ['my portfolio!', '#ffffff']],
+];
+const TERMINAL_CHARS = TERMINAL_SCRIPT.reduce((n, line) => n + line.reduce((m, [t]) => m + t.length, 0), 0);
+
+/**
+ * Time (seconds) at which each character appears. Roughly 6-7 characters per second with
+ * uneven gaps, a slightly longer pause after spaces/punctuation, and a breath between lines.
+ */
+const CHAR_TIMES: number[] = (() => {
+  const text = TERMINAL_SCRIPT.flat().map(([t]) => t).join('');
+  const lineEnds = new Set<number>();
+  let count = 0;
+  TERMINAL_SCRIPT.forEach((line) => {
+    count += line.reduce((m, [t]) => m + t.length, 0);
+    lineEnds.add(count - 1);
+  });
+  let acc = 0.5; // short beat before the first key
+  return Array.from(text).map((ch, i) => {
+    const jitter = ((i * 7919) % 11) / 11; // deterministic, uneven
+    acc += 0.1 + jitter * 0.11;
+    if (/[ ,.;("]/.test(ch)) acc += 0.06;
+    if (lineEnds.has(i)) acc += 0.35;
+    return acc;
+  });
+})();
+const TERMINAL_DURATION = CHAR_TIMES[CHAR_TIMES.length - 1] ?? 0;
+
+/** How many characters are visible at `local` seconds into the cycle. */
+function charsTypedAt(local: number): number {
+  let lo = 0;
+  let hi = CHAR_TIMES.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (CHAR_TIMES[mid] <= local) lo = mid + 1;
+    else hi = mid;
+  }
+  return lo;
+}
+const TYPE_HOLD = 2.6; // seconds the finished text stays before restarting
+const TERM_W = 600;
+const TERM_H = 470;
+
+/** Draws the terminal window with the first `typed` characters of the script. */
+function drawTerminal(ctx: CanvasRenderingContext2D, typed: number, cursorOn: boolean) {
+  ctx.clearRect(0, 0, TERM_W, TERM_H);
+  ctx.fillStyle = '#04100c';
+  ctx.fillRect(0, 0, TERM_W, TERM_H);
+  ctx.strokeStyle = 'rgba(52, 211, 153, 0.7)';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(2, 2, TERM_W - 4, TERM_H - 4);
+
+  // title bar
+  ctx.fillStyle = '#0b1f18';
+  ctx.fillRect(4, 4, TERM_W - 8, 46);
+  ['#3f3f46', '#3f3f46', '#34d399'].forEach((c, i) => {
+    ctx.fillStyle = c;
+    ctx.beginPath();
+    ctx.arc(30 + i * 26, 27, 8, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.fillStyle = '#9ca3af';
+  ctx.font = "bold 22px 'JetBrains Mono', ui-monospace, monospace";
+  ctx.textBaseline = 'middle';
+  ctx.fillText('veer@portfolio: ~', 130, 28);
+
+  // body: only the typed prefix is drawn
+  ctx.font = "bold 44px 'JetBrains Mono', ui-monospace, monospace";
+  ctx.textBaseline = 'alphabetic';
+  let remaining = typed;
+  let lastX = 24;
+  let lastY = 118;
+  for (let li = 0; li < TERMINAL_SCRIPT.length; li++) {
+    let x = 24;
+    const y = 118 + li * 62;
+    lastX = x;
+    lastY = y;
+    for (const [text, color] of TERMINAL_SCRIPT[li]) {
+      if (remaining <= 0) break;
+      const part = text.slice(0, remaining);
+      ctx.fillStyle = color;
+      ctx.fillText(part, x, y);
+      x += ctx.measureText(part).width;
+      remaining -= part.length;
+      lastX = x;
+    }
+    if (remaining <= 0) break;
+  }
+  if (cursorOn) {
+    ctx.fillStyle = '#34d399';
+    ctx.fillRect(lastX + 2, lastY - 36, 24, 44);
+  }
+}
+
 const SHELL = '#1d2128';
 const SHELL_DARK = '#10131a';
 
@@ -58,20 +158,53 @@ export function Bot({
   const tokens = useRef<THREE.Group>(null);
   const armL = useRef<THREE.Group>(null);
   const armR = useRef<THREE.Group>(null);
-  const blink = useRef({ next: 2.2, start: -1 });
+  // Own timer: R3F resets state.clock to 0 whenever the frame loop is paused/resumed,
+  // which used to leave the eyes shut (negative elapsed time) after scrolling away and back.
+  const blink = useRef({ time: 0, next: 2.2, start: -1 });
+  // 0 = watching the cursor, 1 = sitting behind a laptop, typing
+  const work = useRef(0);
+  const laptop = useRef<THREE.Group>(null);
+  // Terminal drawn into a canvas, shown on the hologram panel
+  const terminal = useMemo(() => {
+    const canvas = document.createElement('canvas');
+    canvas.width = TERM_W;
+    canvas.height = TERM_H;
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+    drawTerminal(ctx, 0, true);
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    return { ctx, texture };
+  }, []);
+  useEffect(() => () => terminal.texture.dispose(), [terminal]);
+  const typing = useRef({ t: 0, lastChars: -1, lastCursor: true });
+  // Each typed character presses a key with alternating hands. press[hand]: 1 = just pressed, decays to 0.
+  const taps = useRef({ press: [0, 0], nextHand: 0 });
+  const screenLight = useRef<THREE.PointLight>(null);
 
   useFrame((state, dt) => {
     const t = state.clock.elapsedTime;
     const p = pointer.current;
     const idle = !p.last || performance.now() - p.last > 3000;
-    const { x, y } = !live
+    const { x: rx, y: ry } = !live
       ? { x: 0, y: 0 }
       : idle
         ? { x: Math.sin(t * 0.55) * 0.55, y: Math.sin(t * 0.37 + 1) * 0.18 }
         : p;
     const damp = THREE.MathUtils.damp;
 
-    if (root.current) root.current.position.y = live ? Math.sin(t * 1.3) * 0.07 : 0;
+    // Away for a while: pull out a laptop and type. Any pointer or touch activity ends it.
+    const awayMs = p.last ? performance.now() - p.last : blink.current.time * 1000;
+    const wantsWork = live && awayMs > (p.last ? 8000 : 6000);
+    work.current = damp(work.current, wantsWork ? 1 : 0, wantsWork ? 2.2 : 6, dt);
+    const w = work.current;
+    // While working the gaze drops to the screen instead of following the cursor.
+    const x = rx * (1 - w);
+    const y = ry * (1 - w) + 0.7 * w;
+
+    if (root.current) {
+      root.current.position.y = live ? Math.sin(t * 1.3) * 0.07 : 0;
+      root.current.position.x = -0.5 * w;
+    }
 
     if (head.current) {
       head.current.rotation.y = damp(head.current.rotation.y, x * 0.75, 6, dt);
@@ -88,14 +221,53 @@ export function Bot({
 
     // Occasional blink.
     const b = blink.current;
-    if (live && t > b.next) {
-      b.start = t;
-      b.next = t + 2.5 + Math.random() * 3;
+    b.time += Math.min(dt, 0.1); // a long pause must not count as a blink
+    if (live && b.time > b.next) {
+      b.start = b.time;
+      b.next = b.time + 2.5 + Math.random() * 3;
     }
-    const closed = b.start >= 0 && t - b.start < 0.14;
+    const closed = b.start >= 0 && b.time - b.start >= 0 && b.time - b.start < 0.14;
     const eyeScale = closed ? 0.12 : 1;
     if (eyeL.current) eyeL.current.scale.y = damp(eyeL.current.scale.y, eyeScale, 30, dt);
     if (eyeR.current) eyeR.current.scale.y = damp(eyeR.current.scale.y, eyeScale, 30, dt);
+
+    // Arms reach forward onto the keys; a hand dips each time a character is typed.
+    const press = taps.current.press;
+    const release = Math.exp(-dt * 16);
+    press[0] *= release;
+    press[1] *= release;
+    if (armL.current) armL.current.rotation.x = THREE.MathUtils.lerp(0, -1.02 + press[0] * 0.22, w);
+    if (armR.current) armR.current.rotation.x = THREE.MathUtils.lerp(0, -1.02 + press[1] * 0.22, w);
+    if (laptop.current) {
+      laptop.current.visible = w > 0.01;
+      laptop.current.scale.setScalar(Math.max(0.001, w));
+      laptop.current.position.y = -1.95 + w * 0.5;
+    }
+    // Typing: restarts each time the laptop comes out, loops with a short pause when finished.
+    const ty = typing.current;
+    if (w > 0.6) {
+      ty.t += Math.min(dt, 0.1);
+      const cycle = TERMINAL_DURATION + TYPE_HOLD;
+      const local = ty.t % cycle;
+      const chars = Math.min(TERMINAL_CHARS, charsTypedAt(local));
+      const cursorOn = Math.floor(ty.t * 2.5) % 2 === 0;
+      if (ty.lastChars >= 0 && chars > ty.lastChars) {
+        for (let n = ty.lastChars; n < chars; n++) {
+          taps.current.press[taps.current.nextHand] = 1;
+          taps.current.nextHand = 1 - taps.current.nextHand;
+        }
+      }
+      if (chars !== ty.lastChars || cursorOn !== ty.lastCursor) {
+        ty.lastChars = chars;
+        ty.lastCursor = cursorOn;
+        drawTerminal(terminal.ctx, chars, cursorOn);
+        terminal.texture.needsUpdate = true;
+      }
+    } else if (w < 0.05 && ty.t !== 0) {
+      ty.t = 0;
+      ty.lastChars = -1;
+    }
+    if (screenLight.current) screenLight.current.intensity = 2.5 * w;
 
     if (live) {
       if (antenna.current) {
@@ -192,6 +364,48 @@ export function Bot({
           <mesh ref={antenna} position={[0, 1.0, 0]}>
             <sphereGeometry args={[0.11, 20, 20]} />
             <meshStandardMaterial color={EMERALD} emissive={EMERALD} emissiveIntensity={1.6} />
+          </mesh>
+        </group>
+      </group>
+
+      {/* Laptop that appears when the visitor is away. It sits between the bot and the camera with
+          its screen facing the bot (we see the lid's back). A hologram panel beside the bot shows
+          the code being typed, so the viewer can still see it. */}
+      <group ref={laptop} position={[0, -1.95, 0.75]} scale={0.001} visible={false}>
+        {/* keyboard deck */}
+        <RoundedBox args={[1.5, 0.07, 0.95]} radius={0.03}>
+          <meshStandardMaterial color="#14171c" metalness={0.6} roughness={0.4} />
+        </RoundedBox>
+        <mesh position={[0, 0.04, -0.05]}>
+          <boxGeometry args={[1.2, 0.01, 0.4]} />
+          <meshStandardMaterial color="#0b0e12" emissive="#064e3b" emissiveIntensity={0.6} />
+        </mesh>
+
+        {/* lid: camera-side edge, leaning back toward the bot */}
+        <group position={[0, 0.02, 0.45]} rotation={[-0.12, 0, 0]}>
+          <RoundedBox args={[1.5, 0.95, 0.05]} radius={0.04} position={[0, 0.5, 0]}>
+            <meshStandardMaterial color="#1b1f26" metalness={0.6} roughness={0.35} />
+          </RoundedBox>
+          {/* glowing mark on the back of the lid */}
+          <mesh position={[0, 0.5, 0.03]}>
+            <circleGeometry args={[0.1, 32]} />
+            <meshStandardMaterial color={EMERALD} emissive={EMERALD} emissiveIntensity={2} />
+          </mesh>
+          {/* screen surface, facing the bot */}
+          <mesh position={[0, 0.5, -0.03]} rotation={[0, Math.PI, 0]}>
+            <planeGeometry args={[1.36, 0.82]} />
+            <meshStandardMaterial color="#04100c" emissive="#10b981" emissiveIntensity={0.7} />
+          </mesh>
+        </group>
+
+        {/* screen glow lands on the bot's face */}
+        <pointLight ref={screenLight} position={[0, 0.9, -0.25]} color="#34d399" intensity={0} distance={4} />
+
+        {/* hologram: a real terminal typing out code, angled toward the viewer */}
+        <group position={[1.95, 0.95, -0.2]} rotation={[0, -0.25, 0]}>
+          <mesh>
+            <planeGeometry args={[1.5, 1.18]} />
+            <meshBasicMaterial map={terminal.texture} transparent opacity={0.96} toneMapped={false} />
           </mesh>
         </group>
       </group>
