@@ -51,19 +51,35 @@ export default function App() {
   const [introWillRun] = useState<boolean>(() => !shouldSkipIntro());
   const [introDone, setIntroDone] = useState<boolean>(!introWillRun);
   // The loader's last signal: the 3D bot has drawn its first frames (or there is no WebGL to wait for).
-  const [botReady, setBotReady] = useState<boolean>(() => !hasWebGL());
-  const handleBotReady = useCallback(() => setBotReady(true), []);
+  const [botProgress, setBotProgress] = useState<number>(() => (hasWebGL() ? 0 : 1));
+  const bumpBot = useCallback((p: number) => setBotProgress((cur) => Math.max(cur, p)), []);
+  const handleBotReady = useCallback(() => bumpBot(1), [bumpBot]);
+  const [webglOk] = useState<boolean>(hasWebGL);
+  // Reload (intro skipped): there is no loader to hide the bot's start-up behind. Hold the hero for a
+  // moment, prepare the bot, then reveal the name and the bot together instead of letting the start-up
+  // freeze the text animation and leave the bot missing for a second.
+  const [holdForBot, setHoldForBot] = useState<boolean>(() => !introWillRun && webglOk);
+  useEffect(() => {
+    if (!holdForBot) return;
+    if (botProgress >= 1) {
+      setHoldForBot(false);
+      return;
+    }
+    const cap = window.setTimeout(() => setHoldForBot(false), 1500); // never keep the page waiting
+    return () => window.clearTimeout(cap);
+  }, [holdForBot, botProgress]);
 
   // Fetch the 3D chunk while the intro plays, so the bot is ready when the hero appears.
   useEffect(() => {
-    const warm = () => void import('./components/HeroBot');
+    // Downloading and evaluating the 3D module is the bot's first real stage.
+    const warm = () => void import('./components/HeroBot').then(() => bumpBot(0.25));
     if (typeof window.requestIdleCallback === 'function') {
       const id = window.requestIdleCallback(warm, { timeout: 2000 });
       return () => window.cancelIdleCallback(id);
     }
     const t = setTimeout(warm, 800);
     return () => clearTimeout(t);
-  }, []);
+  }, [bumpBot]);
 
   const handleIntroDone = () => {
     try {
@@ -86,7 +102,7 @@ export default function App() {
       </a>
 
       <AgentCursor />
-      {!introDone && <IntroLoader onDone={handleIntroDone} botReady={botReady} />}
+      {!introDone && <IntroLoader onDone={handleIntroDone} botProgress={botProgress} />}
       <ScrollProgress />
       <Header onOpenResume={() => setResumeOpen(true)} />
 
@@ -94,9 +110,10 @@ export default function App() {
         {/* Mounted from the start so the 3D bot can prepare while the intro runs; the text waits for `play` */}
         <Hero
           onOpenResume={() => setResumeOpen(true)}
-          play={introDone}
-          earlyBot={introWillRun}
+          play={introDone && !holdForBot}
+          earlyBot={webglOk}
           onBotReady={handleBotReady}
+          onBotProgress={bumpBot}
         />
         <LazySection id="about"><About /></LazySection>
         <LazySection id="skills"><Skills /></LazySection>

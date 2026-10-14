@@ -440,16 +440,26 @@ export function Bot({
 }
 
 /** Calls onReady once, after the first few frames are drawn (shaders compiled, scene on the GPU). */
-function ReadyProbe({ onReady }: { onReady?: () => void }) {
+function ReadyProbe({ onReady, onProgress }: { onReady?: () => void; onProgress?: (p: number) => void }) {
   const frames = useRef(0);
   useFrame(() => {
     frames.current += 1;
+    if (frames.current === 1) onProgress?.(0.8); // first frame drawn: shaders compiled
     if (frames.current === 3) onReady?.();
   });
   return null;
 }
 
-export default function HeroBot({ onReady }: { onReady?: () => void }) {
+export default function HeroBot({
+  onReady,
+  onProgress,
+  visible = true,
+}: {
+  onReady?: () => void;
+  onProgress?: (p: number) => void;
+  /** false: keep preparing but stay hidden (the page is not ready to show it yet). */
+  visible?: boolean;
+}) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const pointer = useRef<Pointer>({ x: 0, y: 0 });
   const [inView, setInView] = useState(true);
@@ -493,7 +503,8 @@ export default function HeroBot({ onReady }: { onReady?: () => void }) {
     <div
       ref={wrapRef}
       aria-hidden="true"
-      className="bot-fade-in absolute right-2 top-24 z-0 w-[132px] h-[150px] pointer-events-none sm:pointer-events-auto sm:static sm:block lg:col-span-5 sm:order-first lg:order-none sm:relative sm:w-full sm:h-[380px] lg:h-[520px]"
+      style={{ visibility: visible ? 'visible' : 'hidden' }}
+      className={`${visible ? 'bot-fade-in ' : ''}absolute right-2 top-24 z-0 w-[132px] h-[150px] pointer-events-none sm:pointer-events-auto sm:static sm:block lg:col-span-5 sm:order-first lg:order-none sm:relative sm:w-full sm:h-[380px] lg:h-[520px]`}
     >
       {/* soft backlight behind the character */}
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-56 sm:w-72 sm:h-72 rounded-full bg-emerald-500/20 blur-[80px]" />
@@ -503,13 +514,14 @@ export default function HeroBot({ onReady }: { onReady?: () => void }) {
         frameloop={inView && !reduceMotion ? 'always' : 'demand'}
         gl={{ antialias: true, alpha: true }}
         style={{ background: 'transparent' }}
+        onCreated={() => onProgress?.(0.5)}
       >
         <ambientLight intensity={0.55} />
         <directionalLight position={[3, 4, 5]} intensity={1.5} />
         <directionalLight position={[-4, 2, -3]} color="#10b981" intensity={2.4} />
         <pointLight position={[0, 0.4, 3.2]} color="#34d399" intensity={6} distance={7} />
         <Bot pointer={pointer} live={!reduceMotion} />
-        <ReadyProbe onReady={onReady} />
+        <ReadyProbe onReady={onReady} onProgress={onProgress} />
       </Canvas>
     </div>
   );

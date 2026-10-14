@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 
 interface IntroLoaderProps {
   onDone: () => void;
-  /** true once the 3D bot has drawn its first frames (or there is nothing to wait for). */
-  botReady?: boolean;
+  /** 0..1: how far the 3D bot has got (chunk loaded, canvas created, first frames drawn). 1 = ready. */
+  botProgress?: number;
 }
 
 type Phase = 'loading' | 'complete' | 'expand';
@@ -25,7 +25,7 @@ const HARD_CAP_MS = 8000;
  * skipped outright, otherwise the bar finishes the moment loading does and a
  * short reveal hands over to the hero.
  */
-export default function IntroLoader({ onDone, botReady = false }: IntroLoaderProps) {
+export default function IntroLoader({ onDone, botProgress = 0 }: IntroLoaderProps) {
   const [percent, setPercent] = useState(0);
   const [phase, setPhase] = useState<Phase>('loading');
   const [skipped, setSkipped] = useState(false);
@@ -33,6 +33,8 @@ export default function IntroLoader({ onDone, botReady = false }: IntroLoaderPro
   const [visible, setVisible] = useState(false);
   const target = useRef(0);
   const markRef = useRef<((s: Signal) => void) | null>(null);
+  const recomputeRef = useRef<(() => void) | null>(null);
+  const botFrac = useRef(0);
   const startRef = useRef(performance.now());
   const doneRef = useRef(false);
   const pillRef = useRef<HTMLDivElement>(null);
@@ -56,12 +58,16 @@ export default function IntroLoader({ onDone, botReady = false }: IntroLoaderPro
   useEffect(() => {
     const start = performance.now();
     const done = new Set<Signal>();
+    // The bot is the only step with partial credit: its share grows as it gets further.
+    const recompute = () => {
+      target.current = (Object.keys(WEIGHTS) as Signal[]).reduce((sum, k) => {
+        if (k === 'bot') return sum + WEIGHTS.bot * (done.has('bot') ? 1 : botFrac.current);
+        return sum + (done.has(k) ? WEIGHTS[k] : 0);
+      }, 0);
+    };
     const mark = (s: Signal) => {
       done.add(s);
-      target.current = (Object.keys(WEIGHTS) as Signal[]).reduce(
-        (sum, k) => sum + (done.has(k) ? WEIGHTS[k] : 0),
-        0,
-      );
+      recompute();
       if (target.current >= 100 && performance.now() - start < SKIP_IF_READY_WITHIN_MS) {
         setSkipped(true);
         finish();
@@ -69,6 +75,7 @@ export default function IntroLoader({ onDone, botReady = false }: IntroLoaderPro
     };
 
     markRef.current = mark;
+    recomputeRef.current = recompute;
 
     // DOM: this component only mounts once the app script has run.
     mark('dom');
@@ -92,10 +99,13 @@ export default function IntroLoader({ onDone, botReady = false }: IntroLoaderPro
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // The 3D bot reports in when its first frames are on screen (behind the loader).
+  // The 3D bot reports each stage behind the loader (module loaded, canvas created, frames drawn),
+  // so the meter keeps moving instead of waiting at 60% and jumping to 100%.
   useEffect(() => {
-    if (botReady) markRef.current?.('bot');
-  }, [botReady]);
+    botFrac.current = Math.min(1, Math.max(0, botProgress));
+    if (botFrac.current >= 1) markRef.current?.('bot');
+    else recomputeRef.current?.();
+  }, [botProgress]);
 
   // Smoothly chase the real progress; catches up fast, never invents progress.
   useEffect(() => {

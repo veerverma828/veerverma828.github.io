@@ -26,9 +26,11 @@ interface HeroProps {
   earlyBot?: boolean;
   /** called once the 3D bot has drawn its first frames. */
   onBotReady?: () => void;
+  /** called as the 3D bot moves through its start-up stages (0..1). */
+  onBotProgress?: (p: number) => void;
 }
 
-export default function Hero({ onOpenResume, play = true, earlyBot = false, onBotReady }: HeroProps) {
+export default function Hero({ onOpenResume, play = true, earlyBot = false, onBotReady, onBotProgress }: HeroProps) {
   const [webgl] = React.useState<boolean>(hasWebGL);
   // With an intro, the bot mounts immediately and prepares behind it (the loader waits for onBotReady).
   // Without an intro there is nothing to hide behind, so it waits for the name reveal (~1.7s) to finish
@@ -200,7 +202,7 @@ export default function Hero({ onOpenResume, play = true, earlyBot = false, onBo
           {webgl ? (
             <Suspense fallback={<div aria-hidden="true" className="hidden sm:block lg:col-span-5 sm:order-first lg:order-none sm:h-[380px] lg:h-[520px]" />}>
               {botMounted ? (
-                <HeroBot onReady={onBotReady} />
+                <HeroBot onReady={onBotReady} onProgress={onBotProgress} visible={play} />
               ) : (
                 <div aria-hidden="true" className="hidden sm:block lg:col-span-5 sm:order-first lg:order-none sm:h-[380px] lg:h-[520px]" />
               )}
