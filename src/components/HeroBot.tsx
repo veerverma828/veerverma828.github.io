@@ -194,7 +194,8 @@ export function Bot({
 
     // Away for a while: pull out a laptop and type. Any pointer or touch activity ends it.
     const awayMs = p.last ? performance.now() - p.last : blink.current.time * 1000;
-    const wantsWork = live && awayMs > (p.last ? 8000 : 6000);
+    // Only the big hero bot works at a laptop; the docked corner bust (compact) keeps watching the cursor.
+    const wantsWork = live && !compact && awayMs > (p.last ? 8000 : 6000);
     work.current = damp(work.current, wantsWork ? 1 : 0, wantsWork ? 2.2 : 6, dt);
     const w = work.current;
     // While working the gaze drops to the screen instead of following the cursor.
