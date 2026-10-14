@@ -99,9 +99,15 @@ export default function BotCompanion() {
       const cy = r.top + r.height * 0.4;
       pointer.current.x = THREE.MathUtils.clamp((e.clientX - cx) / (window.innerWidth / 2), -1, 1);
       pointer.current.y = THREE.MathUtils.clamp((e.clientY - cy) / (window.innerHeight / 2), -1, 1);
+      // Tells the bot you are active; without this it assumes you are idle and wanders on its own.
+      pointer.current.last = performance.now();
     };
     window.addEventListener('pointermove', onMove, { passive: true });
-    return () => window.removeEventListener('pointermove', onMove);
+    window.addEventListener('pointerdown', onMove, { passive: true });
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerdown', onMove);
+    };
   }, [reduceMotion]);
 
   if (!webgl || dismissed) return null;
