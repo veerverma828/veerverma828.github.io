@@ -3,6 +3,7 @@ import { ExternalLink, Github, FolderGit2, Check, Clock, FileCheck, Upload, Sett
 import { motion, AnimatePresence } from 'motion/react';
 import { projects, personalInfo } from '../data';
 import { Project } from '../types';
+import SpotlightGlow from './ui/SpotlightGlow';
 
 export default function Projects() {
 
@@ -318,29 +319,29 @@ export default function Projects() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Heading */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-14">
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
-            margin={{ once: true }}
-            className="inline-flex items-center space-x-2 bg-emerald-500/10 border-l-2 border-emerald-500 text-emerald-400 px-3 py-1 rounded-none text-xs font-semibold tracking-wider uppercase font-mono mb-4"
+            viewport={{ once: true }}
+            className="inline-flex items-center space-x-2 bg-emerald-500/10 border-l-2 border-emerald-500 text-emerald-400 px-3.5 py-1 rounded-none text-xs font-semibold tracking-wider uppercase font-mono mb-4"
           >
-            <FolderGit2 className="w-3.5 h-3.5" />
+            <FolderGit2 className="w-3.5 h-3.5" aria-hidden="true" />
             <span>My Work</span>
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            margin={{ once: true }}
-            className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight uppercase"
+            viewport={{ once: true }}
+            className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tighter text-white leading-[1]"
           >
-            Featured Projects
+            Featured <span className="text-emerald-500">projects</span>
           </motion.h2>
-          <p className="text-zinc-400 mt-3 max-w-xl mx-auto text-xs font-light">
+          <p className="text-zinc-300 mt-5 max-w-2xl mx-auto text-base leading-relaxed">
             Here are key AI systems and intelligent applications I have engineered, focusing on agentic workflows, LLM orchestration, vector search, and robust software architecture.
           </p>
-          <div className="w-16 h-[2px] bg-emerald-500 mx-auto mt-4" />
+          <div className="w-16 h-[2px] bg-emerald-500 mx-auto mt-6" />
         </div>
 
         {/* Projects Cards Grid */}
@@ -349,18 +350,21 @@ export default function Projects() {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch"
         >
           <AnimatePresence>
-            {projects.map((project: Project) => (
+            {projects.map((project: Project, idx: number) => (
               <motion.div
                 initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true, margin: '-60px' }}
+                whileHover={{ y: -6 }}
                 exit={{ opacity: 0, scale: 0.96 }}
                 transition={{ duration: 0.25 }}
                 key={project.id}
-                className="flex flex-col bg-[#0b0b0b] border border-white/5 rounded-none hover:border-emerald-500/30 transition-all duration-300 overflow-hidden group shadow-none"
+                className="relative flex flex-col bg-[#0b0b0b] border border-white/5 rounded-none hover:border-emerald-500/40 hover:shadow-[0_20px_60px_-30px_rgba(16,185,129,0.35)] transition-[border-color,box-shadow] duration-300 overflow-hidden group"
               >
+                <SpotlightGlow />
                 
                 {/* Visual Mockup Container (Interactive SVG replacement for images) */}
-                <div className="p-4 bg-zinc-950 rounded-none relative overflow-hidden border-b border-white/5">
+                <div aria-hidden="true" className="p-4 bg-zinc-950 rounded-none relative overflow-hidden border-b border-white/5">
                   {renderVisualMockup(project.imagePlaceholder, project.title)}
                 </div>
 
@@ -368,19 +372,22 @@ export default function Projects() {
                 <div className="p-6 flex-1 flex flex-col justify-between space-y-5">
                   <div className="space-y-3.5">
                     {/* Project Title */}
-                    <h3 className="text-base font-bold uppercase tracking-wider text-white leading-snug group-hover:text-emerald-450 transition-colors">
+                    <span className="block font-mono text-3xl font-black leading-none text-transparent [-webkit-text-stroke:1px_rgba(52,211,153,0.6)]" aria-hidden="true">
+                      {String(idx + 1).padStart(2, '0')}
+                    </span>
+                    <h3 className="text-xl font-bold tracking-tight text-white leading-snug group-hover:text-emerald-400 transition-colors">
                       {project.title}
                     </h3>
                     
                     {/* Description */}
-                    <p className="text-xs text-zinc-400 leading-relaxed font-light">
+                    <p className="text-sm text-zinc-300 leading-relaxed">
                       {project.description}
                     </p>
 
                     {/* Tags row */}
                     <div className="flex flex-wrap gap-1.5 pt-1">
                       {project.tags.map((tag) => (
-                        <span key={tag} className="text-[10px] font-bold font-mono tracking-wider text-emerald-400 bg-emerald-500/5 px-2 py-0.5 border border-emerald-500/10 rounded-none uppercase">
+                        <span key={tag} className="text-[11px] font-bold font-mono tracking-wider text-emerald-400 bg-emerald-500/5 px-2 py-0.5 border border-emerald-500/10 rounded-none uppercase">
                           {tag}
                         </span>
                       ))}
@@ -390,18 +397,18 @@ export default function Projects() {
                     <div className="border-t border-white/5 pt-3.5" />
 
                     {/* Highlights Title */}
-                    <p className="text-[10px] font-bold uppercase text-zinc-500 tracking-wider font-mono">Highlights &amp; Features</p>
+                    <p className="text-[11px] font-bold uppercase text-zinc-400 tracking-wider font-mono">Highlights &amp; Features</p>
 
                     {/* Highlight Items */}
-                    <ul className="space-y-1.5 pl-0 text-xs">
+                    <ul className="space-y-2 pl-0 text-sm">
                       {project.keyHighlights.slice(0, 5).map((hl) => (
                         <li key={hl} className="flex items-start space-x-2 text-zinc-400 leading-snug">
                           <Check className="w-3.5 h-3.5 text-emerald-500 mt-0.5 shrink-0" />
-                          <span className="font-light">{hl}</span>
+                          <span>{hl}</span>
                         </li>
                       ))}
                       {project.keyHighlights.length > 5 && (
-                        <li className="text-[10px] text-zinc-500 italic pl-5">
+                        <li className="text-[11px] text-zinc-400 italic pl-5">
                           + {project.keyHighlights.length - 5} more integrated capabilities
                         </li>
                       )}
@@ -416,7 +423,8 @@ export default function Projects() {
                         target="_blank"
                         rel="noopener noreferrer"
                         referrerPolicy="no-referrer"
-                        className="flex-1 flex items-center justify-center space-x-1.5 px-3 py-2 bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold uppercase tracking-wider rounded-none transition-all duration-200"
+                        aria-label={`Live demo of ${project.title} (opens in a new tab)`}
+                        className="flex-1 flex items-center justify-center space-x-1.5 px-3 py-3 bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold uppercase tracking-wider rounded-none transition-all duration-200"
                       >
                         <span>Live Demo</span>
                         <ExternalLink className="w-3.5 h-3.5" />
@@ -424,7 +432,7 @@ export default function Projects() {
                     ) : (
                       <span
                         aria-disabled="true"
-                        className="flex-1 flex items-center justify-center space-x-1.5 px-3 py-2 bg-zinc-900 border border-white/10 text-zinc-500 text-xs font-bold uppercase tracking-wider rounded-none cursor-not-allowed select-none"
+                        className="flex-1 flex items-center justify-center space-x-1.5 px-3 py-2 bg-zinc-900 border border-white/10 text-zinc-400 text-xs font-bold uppercase tracking-wider rounded-none cursor-not-allowed select-none"
                       >
                         <Clock className="w-3.5 h-3.5" />
                         <span>Coming Soon..</span>
@@ -436,8 +444,8 @@ export default function Projects() {
                         target="_blank"
                         rel="noopener noreferrer"
                         referrerPolicy="no-referrer"
-                        className="flex items-center justify-center p-2 bg-zinc-900 border border-white/5 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded-none transition-all duration-200"
-                        title="Source Code"
+                        aria-label={`Source code for ${project.title} on GitHub (opens in a new tab)`}
+                        className="flex items-center justify-center p-3 bg-zinc-900 border border-white/5 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded-none transition-all duration-200"
                       >
                         <Github className="w-4 h-4" />
                       </a>
@@ -458,7 +466,7 @@ export default function Projects() {
             target="_blank"
             rel="noopener noreferrer"
             referrerPolicy="no-referrer"
-            className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-widest text-emerald-400 hover:text-emerald-300 border-b border-emerald-500/20 pb-1"
+            className="inline-flex items-center space-x-2 min-h-[44px] text-xs font-bold uppercase tracking-widest text-emerald-400 hover:text-emerald-300 border-b border-emerald-500/20"
           >
             <span>Browse more repositories on GitHub</span>
             <ExternalLink className="w-3.5 h-3.5" />

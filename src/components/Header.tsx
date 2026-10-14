@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Sun, Moon, Github, Linkedin, Mail, FileText } from 'lucide-react';
+import { Menu, X, Github, Linkedin, Mail, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { personalInfo } from '../data';
 
 interface HeaderProps {
-  darkMode: boolean;
-  setDarkMode: (dark: boolean) => void;
   onOpenResume: () => void;
 }
 
-export default function Header({ darkMode, setDarkMode, onOpenResume }: HeaderProps) {
+export default function Header({ onOpenResume }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
@@ -43,7 +41,8 @@ export default function Header({ darkMode, setDarkMode, onOpenResume }: HeaderPr
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -90,26 +89,34 @@ export default function Header({ darkMode, setDarkMode, onOpenResume }: HeaderPr
               <span className="text-sm font-bold uppercase tracking-wider text-white transition-colors duration-300 group-hover:text-emerald-400">
                 {personalInfo.name}
               </span>
-              <span className="text-[10px] text-zinc-500 font-mono tracking-tight whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px] sm:max-w-none">
-                AI ENGINEER &amp; LLM ARCHITECT
+              <span className="text-[11px] text-zinc-400 font-mono tracking-tight whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px] sm:max-w-none">
+                FULL-STACK &amp; GENAI DEVELOPER
               </span>
             </div>
           </a>
 
           {/* Desktop Nav Items */}
-          <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">
+          <nav aria-label="Primary" className="hidden md:flex items-center space-x-1 lg:space-x-2">
             {navItems.map((item) => (
               <a
                 key={item.name}
                 href={item.href}
                 onClick={(e) => handleNavClick(e, item.href)}
-                className={`px-3 py-1.5 rounded-none text-xs font-semibold uppercase tracking-widest transition-all duration-300 ${
+                aria-current={activeSection === item.href.replace('#', '') ? 'true' : undefined}
+                className={`relative px-3 py-2.5 rounded-none text-xs font-semibold uppercase tracking-widest transition-all duration-300 ${
                   activeSection === item.href.replace('#', '')
-                    ? 'text-emerald-400 border-b-2 border-emerald-500 font-bold'
-                    : 'text-zinc-400 hover:text-white hover:border-b-2 hover:border-zinc-700'
+                    ? 'text-emerald-400 font-bold'
+                    : 'text-zinc-400 hover:text-white'
                 }`}
               >
                 {item.name}
+                {activeSection === item.href.replace('#', '') && (
+                  <motion.span
+                    layoutId="nav-underline"
+                    className="absolute left-3 right-3 -bottom-0.5 h-[2px] bg-emerald-500"
+                    transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                  />
+                )}
               </a>
             ))}
           </nav>
@@ -122,8 +129,8 @@ export default function Header({ darkMode, setDarkMode, onOpenResume }: HeaderPr
               target="_blank"
               rel="noopener noreferrer"
               referrerPolicy="no-referrer"
-              className="text-zinc-500 hover:text-white transition-colors p-2 rounded-none hover:bg-white/5"
-              title="GitHub"
+              className="text-zinc-400 hover:text-white transition-colors p-3 rounded-none hover:bg-white/5"
+              aria-label="GitHub profile"
             >
               <Github className="w-4 h-4" />
             </a>
@@ -132,8 +139,8 @@ export default function Header({ darkMode, setDarkMode, onOpenResume }: HeaderPr
               onClick={() => {
                 navigator.clipboard.writeText(personalInfo.email);
               }}
-              className="text-zinc-500 hover:text-white transition-colors p-2 rounded-none hover:bg-white/5"
-              title="Email Veer Verma (Copies email & opens contact)"
+              className="text-zinc-400 hover:text-white transition-colors p-3 rounded-none hover:bg-white/5"
+              aria-label="Copy email address and jump to contact form"
             >
               <Mail className="w-4 h-4" />
             </a>
@@ -147,32 +154,17 @@ export default function Header({ darkMode, setDarkMode, onOpenResume }: HeaderPr
               <span>Resume</span>
             </button>
 
-            {/* Dark Mode Toggle */}
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="p-2 rounded-none bg-zinc-900 border border-white/5 hover:bg-zinc-850 hover:border-white/10 text-emerald-500 cursor-pointer flex items-center justify-center transition-all"
-              aria-label="Toggle theme"
-            >
-              {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            </button>
           </div>
 
           {/* Mobile menu toggle */}
           <div className="flex items-center space-x-3 md:hidden">
-            {/* Theme Toggle */}
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="p-2 rounded-none bg-zinc-900 text-emerald-500 border border-white/5 cursor-pointer"
-              aria-label="Toggle theme"
-            >
-              {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            </button>
-
             {/* Menu icon */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 text-zinc-400 hover:text-white rounded-none hover:bg-white/5"
-              aria-label="Toggle Main Menu"
+              className="p-3 text-zinc-300 hover:text-white rounded-none hover:bg-white/5 cursor-pointer"
+              aria-label={isOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isOpen}
+              aria-controls="mobile-menu"
             >
               {isOpen ? <X className="w-5.5 h-5.5" /> : <Menu className="w-5.5 h-5.5" />}
             </button>
@@ -190,6 +182,7 @@ export default function Header({ darkMode, setDarkMode, onOpenResume }: HeaderPr
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2, ease: 'easeInOut' }}
+            id="mobile-menu"
             className="md:hidden bg-[#0c0c0c] border-b border-white/10"
           >
             <div className="px-4 pt-2 pb-6 space-y-2">
@@ -225,6 +218,7 @@ export default function Header({ darkMode, setDarkMode, onOpenResume }: HeaderPr
                     rel="noopener noreferrer"
                     referrerPolicy="no-referrer"
                     className="p-3 text-zinc-400 hover:text-white rounded-none bg-zinc-900 border border-white/5 w-[28%] flex justify-center"
+                    aria-label="GitHub profile"
                   >
                     <Github className="w-4 h-4" />
                   </a>
@@ -234,6 +228,7 @@ export default function Header({ darkMode, setDarkMode, onOpenResume }: HeaderPr
                     rel="noopener noreferrer"
                     referrerPolicy="no-referrer"
                     className="p-3 text-zinc-400 hover:text-white rounded-none bg-zinc-900 border border-white/5 w-[28%] flex justify-center"
+                    aria-label="LinkedIn profile"
                   >
                     <Linkedin className="w-4 h-4" />
                   </a>
@@ -245,7 +240,7 @@ export default function Header({ darkMode, setDarkMode, onOpenResume }: HeaderPr
                       handleNavClick(e, '#contact');
                     }}
                     className="p-3 text-zinc-400 hover:text-white rounded-none bg-zinc-900 border border-white/5 w-[28%] flex justify-center"
-                    title="Email Veer Verma"
+                    aria-label="Copy email address and jump to contact form"
                   >
                     <Mail className="w-4 h-4" />
                   </a>

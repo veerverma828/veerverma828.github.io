@@ -43,6 +43,9 @@ export default function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Resume"
       className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-2 sm:p-4"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
@@ -52,7 +55,7 @@ export default function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
         {/* Top bar */}
         <div className="px-4 sm:px-5 py-3.5 bg-zinc-950 border-b border-white/10 flex items-center justify-between gap-3">
           <div className="flex items-center space-x-3 min-w-0">
-            <span className="text-[10px] bg-emerald-500 text-black px-2.5 py-0.5 rounded font-bold uppercase tracking-widest font-mono shrink-0">
+            <span className="text-[11px] bg-emerald-500 text-black px-2.5 py-0.5 rounded font-bold uppercase tracking-widest font-mono shrink-0">
               Resume
             </span>
             <span className="hidden sm:inline text-sm font-semibold text-zinc-300 font-mono truncate">
@@ -82,7 +85,7 @@ export default function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
             </a>
             <button
               onClick={onClose}
-              className="p-1.5 text-zinc-400 hover:text-white rounded hover:bg-white/10 cursor-pointer transition-colors"
+              className="p-2.5 text-zinc-300 hover:text-white rounded hover:bg-white/10 cursor-pointer transition-colors"
               aria-label="Close modal"
             >
               <X className="w-5 h-5" />

@@ -20,13 +20,13 @@ export default function Footer() {
           {/* Copyright description */}
           <div className="space-y-1 text-center md:text-left">
             <h4 className="text-xs font-bold text-white tracking-widest font-mono uppercase">
-              ⚡ Veer Verma Portfolio
+              Veer Verma
             </h4>
-            <p className="text-xs text-zinc-500 font-light">
-              Designed &amp; Developed with raw passion by <span className="font-semibold text-emerald-400">{personalInfo.name}</span>.
+            <p className="text-xs text-zinc-400">
+              Designed &amp; built by <span className="font-semibold text-emerald-400">{personalInfo.name}</span>.
             </p>
-            <p className="text-[9px] text-zinc-650 font-mono uppercase tracking-wider">
-              &copy; {currentYear} • Modern React Single-Page Architecture
+            <p className="text-[11px] text-zinc-500 font-mono uppercase tracking-wider">
+              &copy; {currentYear} Veer Verma
             </p>
           </div>
 
@@ -38,7 +38,7 @@ export default function Footer() {
               rel="noopener noreferrer"
               referrerPolicy="no-referrer"
               className="p-3 bg-zinc-900 text-zinc-400 hover:text-emerald-400 rounded-none border border-white/5 transition-colors"
-              title="GitHub Profile"
+              aria-label="GitHub profile"
             >
               <Github className="w-4 h-4" />
             </a>
@@ -48,7 +48,7 @@ export default function Footer() {
               rel="noopener noreferrer"
               referrerPolicy="no-referrer"
               className="p-3 bg-zinc-900 text-zinc-400 hover:text-emerald-400 rounded-none border border-white/5 transition-colors"
-              title="LinkedIn Network"
+              aria-label="LinkedIn profile"
             >
               <Linkedin className="w-4 h-4" />
             </a>
@@ -58,7 +58,7 @@ export default function Footer() {
                 navigator.clipboard.writeText(personalInfo.email);
               }}
               className="p-3 bg-zinc-900 text-zinc-400 hover:text-emerald-400 rounded-none border border-white/5 transition-colors"
-              title="Email Veer Verma (Copies email & opens contact)"
+              aria-label="Copy email address and jump to contact form"
             >
               <Mail className="w-4 h-4" />
             </a>
@@ -68,7 +68,7 @@ export default function Footer() {
           <motion.button
             onClick={handleScrollToTop}
             whileHover={{ y: -3 }}
-            className="p-3 bg-zinc-900 text-zinc-300 hover:text-white rounded-none border border-white/5 cursor-pointer text-[10px] font-mono uppercase tracking-widest font-bold transition-colors"
+            className="p-3 bg-zinc-900 text-zinc-300 hover:text-white rounded-none border border-white/5 cursor-pointer text-[11px] font-mono uppercase tracking-widest font-bold transition-colors"
           >
             <div className="flex items-center space-x-1.5">
               <span>Back to Top</span>

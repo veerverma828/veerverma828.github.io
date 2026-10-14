@@ -226,6 +226,20 @@ export const skills: Skill[] = [
 
   // AI Application Development
   {
+    name: 'React',
+    techName: 'AI Application Development',
+    category: 'appdev',
+    icon: 'Code2',
+    description: 'Building responsive, component-driven user interfaces that put AI features in front of real users.'
+  },
+  {
+    name: 'Tailwind CSS',
+    techName: 'AI Application Development',
+    category: 'appdev',
+    icon: 'Wand2',
+    description: 'Styling fast, consistent and accessible interfaces with utility classes and design tokens.'
+  },
+  {
     name: 'Python',
     techName: 'AI Application Development',
     category: 'appdev',
@@ -471,9 +485,9 @@ export const timelineEvents: TimelineEvent[] = [
   },
   {
     year: '2025',
-    title: 'Graduation & AI Engineering Career',
-    subtitle: 'AI Engineer Milestone',
-    description: 'Graduated B.Tech CSE(DS) with 7.72 CGPA. Transitioned core specialization to AI Engineering—building multi-agent systems, RAG pipelines, and LLM integrations.',
+    title: 'Graduation & Full-Stack + GenAI Career',
+    subtitle: 'Full-Stack + GenAI Milestone',
+    description: 'Graduated B.Tech CSE(DS) with 7.72 CGPA. Focused core specialization on Full-Stack and GenAI development—building multi-agent systems, RAG pipelines, and LLM integrations.',
     icon: 'CheckCircle',
     type: 'milestone'
   }

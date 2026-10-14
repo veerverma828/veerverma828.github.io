@@ -29,11 +29,29 @@ export default function CertificateModal({ achievement, isOpen, onClose }: Certi
     }
   }, [achievement]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen || !achievement) return null;
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10 overflow-y-auto bg-black/80 backdrop-blur-md">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={`${achievement.title} certificate`}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10 overflow-y-auto bg-black/80 backdrop-blur-md"
+      >
         
         {/* Backdrop click to close */}
         <motion.div
@@ -59,7 +77,7 @@ export default function CertificateModal({ achievement, isOpen, onClose }: Certi
                 <Award className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-400 block">
+                <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-emerald-400 block">
                   Official Credentials & Certificate
                 </span>
                 <h3 className="text-base font-bold text-white uppercase tracking-wider leading-tight">
@@ -70,8 +88,8 @@ export default function CertificateModal({ achievement, isOpen, onClose }: Certi
 
             <button
               onClick={onClose}
-              className="p-2 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
-              title="Close Modal"
+              className="p-3 text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors"
+              aria-label="Close certificate viewer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -114,6 +132,18 @@ export default function CertificateModal({ achievement, isOpen, onClose }: Certi
                     <ExternalLink className="w-3.5 h-3.5 text-emerald-400" />
                     <span>Open High Resolution Image</span>
                   </a>
+
+                  {achievement.verificationUrl && (
+                    <a
+                      href={achievement.verificationUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center space-x-1.5 px-3 py-1.5 text-xs font-mono font-semibold bg-emerald-500 text-black hover:bg-emerald-400"
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>Verify on Kaggle</span>
+                    </a>
+                  )}
                 </div>
               </div>
             </div>
@@ -122,7 +152,7 @@ export default function CertificateModal({ achievement, isOpen, onClose }: Certi
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 font-mono">
               {achievement.certificateId && (
                 <div className="p-4 bg-zinc-900/60 border border-white/5">
-                  <span className="text-[10px] text-zinc-400 uppercase tracking-widest block mb-1">
+                  <span className="text-[11px] text-zinc-400 uppercase tracking-widest block mb-1">
                     Credential ID
                   </span>
                   <span className="text-xs font-bold text-white">
@@ -132,7 +162,7 @@ export default function CertificateModal({ achievement, isOpen, onClose }: Certi
               )}
 
               <div className="p-4 bg-zinc-900/60 border border-white/5">
-                <span className="text-[10px] text-zinc-400 uppercase tracking-widest block mb-1">
+                <span className="text-[11px] text-zinc-400 uppercase tracking-widest block mb-1">
                   Issuing Organization
                 </span>
                 <span className="text-xs font-bold text-emerald-400">
@@ -166,7 +196,7 @@ export default function CertificateModal({ achievement, isOpen, onClose }: Certi
 
           {/* Footer Bar */}
           <div className="px-6 py-3 bg-zinc-900 border-t border-white/10 flex items-center justify-between shrink-0 font-mono text-xs">
-            <span className="text-zinc-500">
+            <span className="text-zinc-400">
               Veer Verma • Portfolio Certificate Viewer
             </span>
             <button

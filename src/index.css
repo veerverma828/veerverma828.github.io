@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -18,14 +17,29 @@
 }
 
 @layer base {
+  html {
+    color-scheme: dark;
+  }
   body {
     background-color: #050505;
     color: #ffffff;
     font-family: var(--font-sans);
   }
+
+  /* Keyboard focus: visible on every interactive element, hidden for mouse clicks */
+  :focus-visible {
+    outline: 2px solid #34d399;
+    outline-offset: 2px;
+  }
+
+  button,
+  a,
+  [role='button'] {
+    touch-action: manipulation;
+  }
 }
 
-/* Custom scrollbars and modern layout helpers matching Geometric Balance scale */
+/* Custom scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -41,7 +55,13 @@
   background: #10b981;
 }
 
-/* Custom subtle styles */
+.scrollbar-none {
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
 .geo-border {
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -56,4 +76,230 @@
 
 .geo-btn-secondary {
   @apply border border-white/20 text-white hover:bg-white/5 active:bg-white/10;
+}
+
+/* Respect users who ask for less motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Marquee keyframes (used by the intro loader) */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* Slow ambient drift for hero aurora blobs */
+@keyframes drift-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(40px, 30px, 0) scale(1.15); }
+}
+@keyframes drift-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.1); }
+  50% { transform: translate3d(-50px, -20px, 0) scale(0.95); }
+}
+.animate-drift-a { animation: drift-a 16s ease-in-out infinite; }
+.animate-drift-b { animation: drift-b 20s ease-in-out infinite; }
+
+/* ---------- Intro loader ---------- */
+.intro-screen {
+  --lsize: 150px;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #e9e5ec;
+  color: #0b080c;
+}
+.intro-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.intro-skip {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  padding: 10px 14px;
+  border: 1px solid rgba(11, 8, 12, 0.35);
+  cursor: pointer;
+  background: transparent;
+  color: inherit;
+  transition: background 0.2s, color 0.2s;
+}
+.intro-skip:hover {
+  background: #0b080c;
+  color: #e9e5ec;
+}
+.intro-marquee {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  transform: translateY(-50%);
+  overflow: hidden;
+  font-size: clamp(48px, 9vw, 120px);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+}
+.intro-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+.intro-marquee-row {
+  display: flex;
+  flex-shrink: 0;
+}
+.intro-marquee-row span {
+  position: relative;
+  padding: 0 0.7em;
+}
+.intro-marquee-row span::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0.18em;
+  height: 0.18em;
+  border-radius: 50%;
+  background: #0b080c;
+  transform: translate(-50%, -50%);
+}
+
+.intro-pill {
+  position: relative;
+  z-index: 2;
+  /* explicit 0 so min-width/min-height can animate (auto cannot) */
+  min-width: 0;
+  min-height: 0;
+  padding: 6px;
+  border-radius: 9999px;
+  background: #050505;
+  color: #fff;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 15px 15px rgba(0, 0, 0, 0.2);
+  transition: 0.5s ease-in-out;
+}
+.intro-glow {
+  position: absolute;
+  top: var(--my, 50%);
+  left: var(--mx, 50%);
+  width: 200px;
+  height: 110px;
+  border-radius: 50%;
+  background: #10b981;
+  filter: blur(34px);
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+.intro-pill:hover .intro-glow {
+  opacity: 0.55;
+}
+.intro-pill-inner {
+  position: relative;
+  padding: 20px 50px;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.intro-welcome {
+  width: var(--lsize);
+  text-align: center;
+  transition: opacity 0.5s;
+}
+.intro-loading {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50px;
+  width: var(--lsize);
+  max-width: var(--lsize);
+  display: flex;
+  align-items: center;
+  background: #050505;
+  overflow: hidden;
+  transition: max-width 0.45s ease-in-out;
+}
+.intro-loading-label {
+  position: relative;
+  width: var(--lsize);
+  white-space: nowrap;
+}
+.intro-pct {
+  position: absolute;
+  right: 0;
+  font-weight: 300;
+  opacity: 0.7;
+  font-variant-numeric: tabular-nums;
+}
+.intro-caret {
+  position: absolute;
+  right: -14px;
+  top: 50%;
+  width: 11px;
+  height: 22px;
+  background: #fff;
+  transform: translateY(-50%);
+  animation: intro-blink 1s steps(2, start) infinite;
+}
+@keyframes intro-blink {
+  to { opacity: 0; }
+}
+.is-complete .intro-loading {
+  max-width: 0;
+}
+.is-expand .intro-pill {
+  min-width: calc(100vw + 5000px);
+  min-height: calc(100vh + 500px);
+  border-radius: 5000px;
+  box-shadow: none;
+  transition: 0.8s cubic-bezier(0.33, 0.11, 1, 0.72);
+}
+.is-expand .intro-welcome {
+  opacity: 0;
+}
+.is-expand .intro-marquee,
+.is-expand .intro-header {
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+/* Custom cursor: hide the system arrow only while AgentCursor is live (class set by JS). */
+html.agent-cursor,
+html.agent-cursor * {
+  cursor: none !important;
+}
+html.agent-cursor :is(input, textarea, [contenteditable='true']) {
+  cursor: text !important;
+}
+html.agent-cursor :is(select, object, iframe, embed) {
+  cursor: auto !important;
 }
