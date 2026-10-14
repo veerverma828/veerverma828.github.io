@@ -483,7 +483,7 @@ export default function HeroBot() {
     <div
       ref={wrapRef}
       aria-hidden="true"
-      className="absolute right-2 top-24 z-0 w-[132px] h-[150px] pointer-events-none sm:pointer-events-auto sm:static sm:block lg:col-span-5 sm:order-first lg:order-none sm:relative sm:w-full sm:h-[380px] lg:h-[520px]"
+      className="bot-fade-in absolute right-2 top-24 z-0 w-[132px] h-[150px] pointer-events-none sm:pointer-events-auto sm:static sm:block lg:col-span-5 sm:order-first lg:order-none sm:relative sm:w-full sm:h-[380px] lg:h-[520px]"
     >
       {/* soft backlight behind the character */}
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-56 sm:w-72 sm:h-72 rounded-full bg-emerald-500/20 blur-[80px]" />

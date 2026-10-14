@@ -303,3 +303,12 @@ html.agent-cursor :is(input, textarea, [contenteditable='true']) {
 html.agent-cursor :is(select, object, iframe, embed) {
   cursor: auto !important;
 }
+
+/* Hero 3D bot fades in once it starts, after the name reveal */
+@keyframes bot-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.bot-fade-in {
+  animation: bot-fade-in 0.8s ease-out both;
+}

@@ -24,6 +24,12 @@ interface HeroProps {
 
 export default function Hero({ onOpenResume }: HeroProps) {
   const [webgl] = React.useState<boolean>(hasWebGL);
+  // The name reveal takes ~1.7s. Starting WebGL earlier blocks the main thread mid-animation and the letters stutter.
+  const [botReady, setBotReady] = React.useState<boolean>(false);
+  React.useEffect(() => {
+    const id = window.setTimeout(() => setBotReady(true), 1800);
+    return () => window.clearTimeout(id);
+  }, []);
   const handleScrollToContact = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const contactElem = document.getElementById('contact');
@@ -180,7 +186,11 @@ export default function Hero({ onOpenResume }: HeroProps) {
           {/* Hero Right: 3D bot (WebGL) or the 2D constellation fallback */}
           {webgl ? (
             <Suspense fallback={<div aria-hidden="true" className="hidden sm:block lg:col-span-5 sm:order-first lg:order-none sm:h-[380px] lg:h-[520px]" />}>
-              <HeroBot />
+              {botReady ? (
+                <HeroBot />
+              ) : (
+                <div aria-hidden="true" className="hidden sm:block lg:col-span-5 sm:order-first lg:order-none sm:h-[380px] lg:h-[520px]" />
+              )}
             </Suspense>
           ) : (
           <motion.div
