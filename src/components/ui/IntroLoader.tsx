@@ -35,6 +35,10 @@ export default function IntroLoader({ onDone, botProgress = 0 }: IntroLoaderProp
   const markRef = useRef<((s: Signal) => void) | null>(null);
   const recomputeRef = useRef<(() => void) | null>(null);
   const botFrac = useRef(0);
+  // Weight (in %) of the step the loader is currently waiting on. Used to keep the meter creeping
+  // forward while that step is in progress, instead of freezing until it reports.
+  const nextWeight = useRef<number>(WEIGHTS.dom);
+  const shown = useRef(0);
   const startRef = useRef(performance.now());
   const doneRef = useRef(false);
   const pillRef = useRef<HTMLDivElement>(null);
@@ -64,6 +68,12 @@ export default function IntroLoader({ onDone, botProgress = 0 }: IntroLoaderProp
         if (k === 'bot') return sum + WEIGHTS.bot * (done.has('bot') ? 1 : botFrac.current);
         return sum + (done.has(k) ? WEIGHTS[k] : 0);
       }, 0);
+      const waitingOn = (['dom', 'fonts', 'load', 'bot'] as Signal[]).find((k) => !done.has(k));
+      nextWeight.current = !waitingOn
+        ? 0
+        : waitingOn === 'bot'
+          ? WEIGHTS.bot * (1 - botFrac.current)
+          : WEIGHTS[waitingOn];
     };
     const mark = (s: Signal) => {
       done.add(s);
@@ -107,17 +117,27 @@ export default function IntroLoader({ onDone, botProgress = 0 }: IntroLoaderProp
     else recomputeRef.current?.();
   }, [botProgress]);
 
-  // Smoothly chase the real progress; catches up fast, never invents progress.
+  // Smooth display. Real progress arrives in steps (fonts, page, bot stages), so showing it directly
+  // freezes between steps. The shown value therefore:
+  //   1. catches up quickly to real progress, and
+  //   2. while a step is still running, creeps slowly into that step (never more than 85% of its
+  //      weight, never past 99%), so the number keeps moving.
+  // It still reaches 100% only when the real work is done.
   useEffect(() => {
     if (skipped) return;
     const id = window.setInterval(() => {
-      setPercent((p) => {
-        const elapsed = performance.now() - startRef.current;
-        const timeCap = Math.min(100, (elapsed / MIN_DISPLAY_MS) * 100);
-        const t = Math.min(target.current, timeCap);
-        if (p >= t) return p;
-        return Math.min(t, p + Math.max(1, Math.ceil((t - p) * 0.3)));
-      });
+      const elapsed = performance.now() - startRef.current;
+      const timeCap = Math.min(100, (elapsed / MIN_DISPLAY_MS) * 100);
+      const real = Math.min(target.current, timeCap);
+      let v = shown.current;
+      if (v < real) {
+        v = Math.min(real, v + Math.max(1, (real - v) * 0.3));
+      } else if (target.current < 100) {
+        const ceiling = Math.min(99, target.current + nextWeight.current * 0.85, timeCap);
+        if (v < ceiling) v += Math.max(0.12, (ceiling - v) * 0.025);
+      }
+      shown.current = Math.min(100, v);
+      setPercent(Math.floor(shown.current + 1e-6));
     }, 30);
     return () => window.clearInterval(id);
   }, [skipped]);

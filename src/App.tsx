@@ -55,19 +55,6 @@ export default function App() {
   const bumpBot = useCallback((p: number) => setBotProgress((cur) => Math.max(cur, p)), []);
   const handleBotReady = useCallback(() => bumpBot(1), [bumpBot]);
   const [webglOk] = useState<boolean>(hasWebGL);
-  // Reload (intro skipped): there is no loader to hide the bot's start-up behind. Hold the hero for a
-  // moment, prepare the bot, then reveal the name and the bot together instead of letting the start-up
-  // freeze the text animation and leave the bot missing for a second.
-  const [holdForBot, setHoldForBot] = useState<boolean>(() => !introWillRun && webglOk);
-  useEffect(() => {
-    if (!holdForBot) return;
-    if (botProgress >= 1) {
-      setHoldForBot(false);
-      return;
-    }
-    const cap = window.setTimeout(() => setHoldForBot(false), 1500); // never keep the page waiting
-    return () => window.clearTimeout(cap);
-  }, [holdForBot, botProgress]);
 
   // Fetch the 3D chunk while the intro plays, so the bot is ready when the hero appears.
   useEffect(() => {
@@ -110,7 +97,7 @@ export default function App() {
         {/* Mounted from the start so the 3D bot can prepare while the intro runs; the text waits for `play` */}
         <Hero
           onOpenResume={() => setResumeOpen(true)}
-          play={introDone && !holdForBot}
+          play={introDone}
           earlyBot={webglOk}
           onBotReady={handleBotReady}
           onBotProgress={bumpBot}

@@ -460,6 +460,13 @@ export default function HeroBot({
   /** false: keep preparing but stay hidden (the page is not ready to show it yet). */
   visible?: boolean;
 }) {
+  // Stays hidden until its first frames are drawn, then fades in: no half-built bot ever shows.
+  const [drawn, setDrawn] = useState(false);
+  const handleReady = () => {
+    setDrawn(true);
+    onReady?.();
+  };
+  const shown = visible && drawn;
   const wrapRef = useRef<HTMLDivElement>(null);
   const pointer = useRef<Pointer>({ x: 0, y: 0 });
   const [inView, setInView] = useState(true);
@@ -503,8 +510,8 @@ export default function HeroBot({
     <div
       ref={wrapRef}
       aria-hidden="true"
-      style={{ visibility: visible ? 'visible' : 'hidden' }}
-      className={`${visible ? 'bot-fade-in ' : ''}absolute right-2 top-24 z-0 w-[132px] h-[150px] pointer-events-none sm:pointer-events-auto sm:static sm:block lg:col-span-5 sm:order-first lg:order-none sm:relative sm:w-full sm:h-[380px] lg:h-[520px]`}
+      style={{ visibility: shown ? 'visible' : 'hidden' }}
+      className={`${shown ? 'bot-fade-in ' : ''}absolute right-2 top-24 z-0 w-[132px] h-[150px] pointer-events-none sm:pointer-events-auto sm:static sm:block lg:col-span-5 sm:order-first lg:order-none sm:relative sm:w-full sm:h-[380px] lg:h-[520px]`}
     >
       {/* soft backlight behind the character */}
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-56 sm:w-72 sm:h-72 rounded-full bg-emerald-500/20 blur-[80px]" />
@@ -521,7 +528,7 @@ export default function HeroBot({
         <directionalLight position={[-4, 2, -3]} color="#10b981" intensity={2.4} />
         <pointLight position={[0, 0.4, 3.2]} color="#34d399" intensity={6} distance={7} />
         <Bot pointer={pointer} live={!reduceMotion} />
-        <ReadyProbe onReady={onReady} onProgress={onProgress} />
+        <ReadyProbe onReady={handleReady} onProgress={onProgress} />
       </Canvas>
     </div>
   );
