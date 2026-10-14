@@ -40,7 +40,7 @@ export default function About() {
         </div>
 
         {/* Story & Statistics Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-14 lg:gap-16 items-start">
+        <div className="grid grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] gap-3 sm:gap-6 lg:grid-cols-12 lg:gap-x-16 lg:gap-y-8 items-start">
           
           {/* Left Column: Portrait */}
           <motion.figure
@@ -48,9 +48,9 @@ export default function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="lg:col-span-5 w-full max-w-xs sm:max-w-sm mx-auto lg:mx-0 lg:max-w-xs xl:max-w-sm [@media(min-width:1024px)_and_(min-height:680px)]:sticky [@media(min-width:1024px)_and_(min-height:680px)]:top-28"
+            className="w-full max-lg:sticky max-lg:top-20 lg:col-span-5 lg:row-span-2 lg:max-w-xs xl:max-w-sm [@media(min-width:1024px)_and_(min-height:680px)]:sticky [@media(min-width:1024px)_and_(min-height:680px)]:top-28"
           >
-            <div className="border border-white/10 bg-zinc-900/40 p-3 shadow-xl">
+            <div className="border border-white/10 bg-zinc-900/40 p-2 sm:p-3 shadow-xl">
               <div className="relative overflow-hidden rounded-md bg-zinc-900">
                 <img
                   src="/veer-verma.jpg"
@@ -63,11 +63,11 @@ export default function About() {
                 {/* faint bottom shade so the bright sky sits quietly on the dark page */}
                 <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/45 to-transparent" />
               </div>
-              <figcaption className="px-2 pt-4 pb-2">
-                <p className="text-xl font-bold text-white tracking-tight">{personalInfo.name}</p>
-                <p className="mt-1 text-sm text-zinc-300">Full-Stack &amp; GenAI Developer</p>
-                <p className="mt-0.5 text-sm text-zinc-400">{personalInfo.location}</p>
-                <p className="mt-4 inline-flex items-center gap-2 bg-zinc-950 border border-white/10 px-3 py-1.5 text-[11px] font-mono text-zinc-100">
+              <figcaption className="px-1 sm:px-2 pt-3 sm:pt-4 pb-1 sm:pb-2">
+                <p className="text-sm sm:text-xl font-bold text-white tracking-tight">{personalInfo.name}</p>
+                <p className="mt-1 text-[11px] sm:text-sm leading-snug text-zinc-300">Full-Stack &amp; GenAI Developer</p>
+                <p className="mt-0.5 text-[11px] sm:text-sm text-zinc-400">{personalInfo.location}</p>
+                <p className="mt-3 sm:mt-4 inline-flex items-center gap-2 bg-zinc-950 border border-white/10 px-2 sm:px-3 py-1 sm:py-1.5 text-[11px] font-mono text-zinc-100">
                   <span className="relative flex h-2 w-2" aria-hidden="true">
                     <span className="absolute inline-flex h-full w-full animate-ping bg-emerald-400 opacity-60" />
                     <span className="relative inline-flex h-2 w-2 bg-emerald-500" />
@@ -79,25 +79,25 @@ export default function About() {
           </motion.figure>
 
           {/* Right Column: Terminal bio, background and stats */}
-          <div className="lg:col-span-7 space-y-8">
-          <div>
+          <div className="contents">
+          <div className="min-w-0 lg:col-span-7">
             <div className="w-full bg-zinc-950 rounded-none shadow-2xl overflow-hidden border border-white/10">
               {/* Terminal Window Header */}
-              <div className="flex items-center justify-between px-4 py-3 bg-zinc-900 border-b border-white/5">
+              <div className="flex items-center justify-between gap-2 px-2 sm:px-4 py-2 sm:py-3 bg-zinc-900 border-b border-white/5">
                 <div className="flex space-x-1.5">
                   <div className="w-2.5 h-2.5 bg-zinc-800" />
                   <div className="w-2.5 h-2.5 bg-zinc-800" />
                   <div className="w-2.5 h-2.5 bg-emerald-500/80" />
                 </div>
-                <div className="text-[11px] text-zinc-400 font-mono flex items-center space-x-1.5 uppercase tracking-wider">
+                <div className="min-w-0 text-[11px] text-zinc-400 font-mono flex items-center space-x-1.5 uppercase tracking-wider">
                   <Terminal className="w-3.5 h-3.5 text-emerald-500" />
-                  <span>veer_verma_ai.sh</span>
+                  <span className="truncate">veer_verma_ai.sh</span>
                 </div>
-                <div className="w-6" /> {/* spacer */}
+                <div className="hidden sm:block w-6" /> {/* spacer */}
               </div>
 
               {/* Terminal Window Body */}
-              <div className="p-6 text-xs text-zinc-300 font-mono space-y-4 overflow-x-auto leading-relaxed">
+              <div className="p-3 sm:p-6 text-[11px] sm:text-xs text-zinc-300 font-mono space-y-3 sm:space-y-4 overflow-x-auto leading-relaxed break-words">
                 <div>
                   <span className="text-emerald-500">veer@ai-station</span>:<span className="text-zinc-400">~$</span> cat about.txt
                 </div>
@@ -107,7 +107,7 @@ export default function About() {
                 <div>
                   <span className="text-emerald-500 font-bold">veer@ai-station</span>:<span className="text-zinc-400">~$</span> ./get_info.sh
                 </div>
-                <div className="pl-4 space-y-1.5 text-zinc-400">
+                <div className="pl-2 sm:pl-4 space-y-1.5 text-zinc-400">
                   <p><span className="text-zinc-400">▸ Passionate_About:</span> ['Autonomous Agents', 'RAG & Vector Search', 'LLM Applications']</p>
                   <p><span className="text-zinc-400">▸ Code_Philosophy:</span> ['Deterministic Reliability', 'Scalable AI Pipelines']</p>
                   <p><span className="text-zinc-400">▸ Current_Focus:</span> ['Multi-Agent Workflows', 'MCP Protocol', 'Fine-Tuning']</p>
@@ -121,7 +121,7 @@ export default function About() {
           </div>
 
           {/* Key Professional Stats Grid */}
-          <div className="space-y-6">
+          <div className="col-span-2 lg:col-span-7 space-y-6 mt-4 lg:mt-0">
             <h3 className="text-xl font-bold text-white flex items-center space-x-2 tracking-tight">
               <span>Education &amp; Background</span>
             </h3>
