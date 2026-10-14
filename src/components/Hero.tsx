@@ -20,27 +20,10 @@ function hasWebGL(): boolean {
 
 interface HeroProps {
   onOpenResume: () => void;
-  /** false while the intro covers the page: the 3D bot prepares, the text waits. */
-  play?: boolean;
-  /** true when an intro is running, so the bot can start preparing right away. */
-  earlyBot?: boolean;
-  /** called once the 3D bot has drawn its first frames. */
-  onBotReady?: () => void;
-  /** called as the 3D bot moves through its start-up stages (0..1). */
-  onBotProgress?: (p: number) => void;
 }
 
-export default function Hero({ onOpenResume, play = true, earlyBot = false, onBotReady, onBotProgress }: HeroProps) {
+export default function Hero({ onOpenResume }: HeroProps) {
   const [webgl] = React.useState<boolean>(hasWebGL);
-  // With an intro, the bot mounts immediately and prepares behind it (the loader waits for onBotReady).
-  // Without an intro there is nothing to hide behind, so it waits for the name reveal (~1.7s) to finish
-  // instead of blocking the main thread in the middle of the letter animation.
-  const [botMounted, setBotMounted] = React.useState<boolean>(earlyBot);
-  React.useEffect(() => {
-    if (botMounted || !play) return;
-    const id = window.setTimeout(() => setBotMounted(true), 1800);
-    return () => window.clearTimeout(id);
-  }, [play, botMounted]);
   const handleScrollToContact = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const contactElem = document.getElementById('contact');
@@ -92,7 +75,6 @@ export default function Hero({ onOpenResume, play = true, earlyBot = false, onBo
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
           {/* Hero Left: Information */}
-          {play ? (
           <div className="lg:col-span-7 flex flex-col justify-center space-y-6 text-left">
             
             {/* Tag Badge */}
@@ -194,18 +176,11 @@ export default function Hero({ onOpenResume, play = true, earlyBot = false, onBo
               </button>
             </motion.div>
           </div>
-          ) : (
-            <div aria-hidden="true" className="lg:col-span-7" />
-          )}
 
           {/* Hero Right: 3D bot (WebGL) or the 2D constellation fallback */}
           {webgl ? (
             <Suspense fallback={<div aria-hidden="true" className="hidden sm:block lg:col-span-5 sm:order-first lg:order-none sm:h-[380px] lg:h-[520px]" />}>
-              {botMounted ? (
-                <HeroBot onReady={onBotReady} onProgress={onBotProgress} visible={play} />
-              ) : (
-                <div aria-hidden="true" className="hidden sm:block lg:col-span-5 sm:order-first lg:order-none sm:h-[380px] lg:h-[520px]" />
-              )}
+              <HeroBot />
             </Suspense>
           ) : (
           <motion.div

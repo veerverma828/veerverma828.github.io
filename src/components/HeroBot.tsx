@@ -440,33 +440,19 @@ export function Bot({
 }
 
 /** Calls onReady once, after the first few frames are drawn (shaders compiled, scene on the GPU). */
-function ReadyProbe({ onReady, onProgress }: { onReady?: () => void; onProgress?: (p: number) => void }) {
+function ReadyProbe({ onReady }: { onReady: () => void }) {
   const frames = useRef(0);
   useFrame(() => {
     frames.current += 1;
-    if (frames.current === 1) onProgress?.(0.8); // first frame drawn: shaders compiled
-    if (frames.current === 3) onReady?.();
+    if (frames.current === 3) onReady();
   });
   return null;
 }
 
-export default function HeroBot({
-  onReady,
-  onProgress,
-  visible = true,
-}: {
-  onReady?: () => void;
-  onProgress?: (p: number) => void;
-  /** false: keep preparing but stay hidden (the page is not ready to show it yet). */
-  visible?: boolean;
-}) {
+export default function HeroBot() {
   // Stays hidden until its first frames are drawn, then fades in: no half-built bot ever shows.
   const [drawn, setDrawn] = useState(false);
-  const handleReady = () => {
-    setDrawn(true);
-    onReady?.();
-  };
-  const shown = visible && drawn;
+  const shown = drawn;
   const wrapRef = useRef<HTMLDivElement>(null);
   const pointer = useRef<Pointer>({ x: 0, y: 0 });
   const [inView, setInView] = useState(true);
@@ -521,14 +507,13 @@ export default function HeroBot({
         frameloop={inView && !reduceMotion ? 'always' : 'demand'}
         gl={{ antialias: true, alpha: true }}
         style={{ background: 'transparent' }}
-        onCreated={() => onProgress?.(0.5)}
       >
         <ambientLight intensity={0.55} />
         <directionalLight position={[3, 4, 5]} intensity={1.5} />
         <directionalLight position={[-4, 2, -3]} color="#10b981" intensity={2.4} />
         <pointLight position={[0, 0.4, 3.2]} color="#34d399" intensity={6} distance={7} />
         <Bot pointer={pointer} live={!reduceMotion} />
-        <ReadyProbe onReady={handleReady} onProgress={onProgress} />
+        <ReadyProbe onReady={() => setDrawn(true)} />
       </Canvas>
     </div>
   );
