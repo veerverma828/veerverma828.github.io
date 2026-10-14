@@ -20,11 +20,9 @@ function hasWebGL(): boolean {
 
 interface HeroProps {
   onOpenResume: () => void;
-  /** false while the text is still revealing: no 3D work is allowed to start yet. */
-  botEnabled?: boolean;
 }
 
-export default function Hero({ onOpenResume, botEnabled = true }: HeroProps) {
+export default function Hero({ onOpenResume }: HeroProps) {
   const [webgl] = React.useState<boolean>(hasWebGL);
   const handleScrollToContact = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -182,11 +180,7 @@ export default function Hero({ onOpenResume, botEnabled = true }: HeroProps) {
           {/* Hero Right: 3D bot (WebGL) or the 2D constellation fallback */}
           {webgl ? (
             <Suspense fallback={<div aria-hidden="true" className="hidden sm:block lg:col-span-5 sm:order-first lg:order-none sm:h-[380px] lg:h-[520px]" />}>
-              {botEnabled ? (
-                <HeroBot />
-              ) : (
-                <div aria-hidden="true" className="hidden sm:block lg:col-span-5 sm:order-first lg:order-none sm:h-[380px] lg:h-[520px]" />
-              )}
+              <HeroBot />
             </Suspense>
           ) : (
           <motion.div

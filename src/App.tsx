@@ -30,82 +30,18 @@ function LazySection({ id, children }: { id: string; children: ReactNode }) {
   );
 }
 
-/**
- * Below-the-fold sections, in page order. Rendering all of them in one go put a ~27ms frame right in
- * the middle of the name reveal, so they are mounted one per idle slice after the reveal instead.
- */
-const SECTIONS: Array<{ id: string; node: ReactNode }> = [
-  { id: 'about', node: <About /> },
-  { id: 'skills', node: <Skills /> },
-  { id: 'projects', node: <Projects /> },
-  { id: 'education', node: <Education /> },
-  { id: 'why-work-with-me', node: <WhyWorkWithMe /> },
-  { id: 'tech-stack', node: <TechStack /> },
-  { id: 'contact', node: <Contact /> },
-];
-
-/** The name reveal runs about 1.7s. The 3D bot waits for that, then starts when the browser is idle. */
-const TEXT_REVEAL_MS = 1700;
-
 export default function App() {
   const [resumeOpen, setResumeOpen] = useState<boolean>(false);
-  const [heavyReady, setHeavyReady] = useState<boolean>(false);
-  // How many of SECTIONS are mounted so far.
-  const [mounted, setMounted] = useState<number>(0);
 
-  // Text first, then the bot: wait out the reveal, then start the 3D work in an idle moment.
+  // Start fetching the 3D chunk as soon as the browser is idle, ahead of the hero asking for it.
   useEffect(() => {
-    let idleId: number | undefined;
-    const start = () => setHeavyReady(true);
-    const timer = window.setTimeout(() => {
-      if (typeof window.requestIdleCallback === 'function') {
-        idleId = window.requestIdleCallback(start, { timeout: 800 });
-      } else {
-        start();
-      }
-    }, TEXT_REVEAL_MS);
-    return () => {
-      window.clearTimeout(timer);
-      if (idleId !== undefined && typeof window.cancelIdleCallback === 'function') window.cancelIdleCallback(idleId);
-    };
-  }, []);
-
-  // After the text reveal, mount one section per idle slice (top to bottom).
-  useEffect(() => {
-    let cancelled = false;
-    let handle: number | undefined;
-    const schedule = (fn: () => void) => {
-      if (typeof window.requestIdleCallback === 'function') {
-        handle = window.requestIdleCallback(fn, { timeout: 300 });
-      } else {
-        handle = window.setTimeout(fn, 60);
-      }
-    };
-    const step = () => {
-      if (cancelled) return;
-      setMounted((m) => {
-        if (m >= SECTIONS.length) return m;
-        return m + 1;
-      });
-      schedule(step);
-    };
-    const timer = window.setTimeout(() => schedule(step), TEXT_REVEAL_MS);
-    return () => {
-      cancelled = true;
-      window.clearTimeout(timer);
-      if (handle !== undefined) {
-        if (typeof window.cancelIdleCallback === 'function') window.cancelIdleCallback(handle);
-        window.clearTimeout(handle);
-      }
-    };
-  }, []);
-
-  // The visitor starts scrolling/tapping/typing early: they want the content now, so mount it all.
-  useEffect(() => {
-    const all = () => setMounted(SECTIONS.length);
-    const events: Array<keyof WindowEventMap> = ['scroll', 'wheel', 'touchstart', 'keydown', 'pointerdown'];
-    events.forEach((e) => window.addEventListener(e, all, { once: true, passive: true }));
-    return () => events.forEach((e) => window.removeEventListener(e, all));
+    const warm = () => void import('./components/HeroBot');
+    if (typeof window.requestIdleCallback === 'function') {
+      const id = window.requestIdleCallback(warm, { timeout: 2000 });
+      return () => window.cancelIdleCallback(id);
+    }
+    const t = setTimeout(warm, 800);
+    return () => clearTimeout(t);
   }, []);
 
   return (
@@ -124,28 +60,23 @@ export default function App() {
       <Header onOpenResume={() => setResumeOpen(true)} />
 
       <main id="main" className="relative">
-        <Hero onOpenResume={() => setResumeOpen(true)} botEnabled={heavyReady} />
-        {SECTIONS.map((section, i) =>
-          i < mounted ? (
-            <LazySection key={section.id} id={section.id}>
-              {section.node}
-            </LazySection>
-          ) : (
-            // Keeps the id in the page so nav links and the scroll spy still find it.
-            <section key={section.id} id={section.id} aria-hidden="true" className="min-h-[40vh]" />
-          ),
-        )}
+        <Hero onOpenResume={() => setResumeOpen(true)} />
+        <LazySection id="about"><About /></LazySection>
+        <LazySection id="skills"><Skills /></LazySection>
+        <LazySection id="projects"><Projects /></LazySection>
+        <LazySection id="education"><Education /></LazySection>
+        <LazySection id="why-work-with-me"><WhyWorkWithMe /></LazySection>
+        <LazySection id="tech-stack"><TechStack /></LazySection>
+        <LazySection id="contact"><Contact /></LazySection>
       </main>
 
       <Footer />
 
       <ResumeModal isOpen={resumeOpen} onClose={() => setResumeOpen(false)} />
 
-      {heavyReady && (
-        <Suspense fallback={null}>
-          <BotCompanion />
-        </Suspense>
-      )}
+      <Suspense fallback={null}>
+        <BotCompanion />
+      </Suspense>
     </div>
     </MotionConfig>
   );
