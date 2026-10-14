@@ -42,6 +42,8 @@ export default function About() {
         {/* Story & Statistics Grid */}
         <div className="grid grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] gap-3 sm:gap-6 lg:grid-cols-12 lg:gap-x-16 lg:gap-y-8 items-start">
           
+          {/* Portrait + terminal: their own row on phones so the sticky portrait cannot outlive it */}
+          <div className="col-span-2 grid grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] gap-3 sm:gap-6 items-start lg:contents">
           {/* Left Column: Portrait */}
           <motion.figure
             initial={{ opacity: 0, y: 20 }}
@@ -78,8 +80,7 @@ export default function About() {
             </div>
           </motion.figure>
 
-          {/* Right Column: Terminal bio, background and stats */}
-          <div className="contents">
+          {/* Terminal */}
           <div className="min-w-0 lg:col-span-7">
             <div className="w-full bg-zinc-950 rounded-none shadow-2xl overflow-hidden border border-white/10">
               {/* Terminal Window Header */}
@@ -120,6 +121,8 @@ export default function About() {
             </div>
           </div>
 
+          </div>
+
           {/* Key Professional Stats Grid */}
           <div className="col-span-2 lg:col-span-7 space-y-6 mt-4 lg:mt-0">
             <h3 className="text-xl font-bold text-white flex items-center space-x-2 tracking-tight">
@@ -155,7 +158,6 @@ export default function About() {
                 );
               })}
             </div>
-          </div>
           </div>
 
         </div>
