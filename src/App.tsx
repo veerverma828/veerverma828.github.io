@@ -30,18 +30,28 @@ function LazySection({ id, children }: { id: string; children: ReactNode }) {
   );
 }
 
+/** The name reveal runs about 1.7s. The 3D bot waits for that, then starts when the browser is idle. */
+const TEXT_REVEAL_MS = 1700;
+
 export default function App() {
   const [resumeOpen, setResumeOpen] = useState<boolean>(false);
+  const [heavyReady, setHeavyReady] = useState<boolean>(false);
 
-  // Start fetching the 3D chunk as soon as the browser is idle, ahead of the hero asking for it.
+  // Text first, then the bot: wait out the reveal, then start the 3D work in an idle moment.
   useEffect(() => {
-    const warm = () => void import('./components/HeroBot');
-    if (typeof window.requestIdleCallback === 'function') {
-      const id = window.requestIdleCallback(warm, { timeout: 2000 });
-      return () => window.cancelIdleCallback(id);
-    }
-    const t = setTimeout(warm, 800);
-    return () => clearTimeout(t);
+    let idleId: number | undefined;
+    const start = () => setHeavyReady(true);
+    const timer = window.setTimeout(() => {
+      if (typeof window.requestIdleCallback === 'function') {
+        idleId = window.requestIdleCallback(start, { timeout: 800 });
+      } else {
+        start();
+      }
+    }, TEXT_REVEAL_MS);
+    return () => {
+      window.clearTimeout(timer);
+      if (idleId !== undefined && typeof window.cancelIdleCallback === 'function') window.cancelIdleCallback(idleId);
+    };
   }, []);
 
   return (
@@ -60,7 +70,7 @@ export default function App() {
       <Header onOpenResume={() => setResumeOpen(true)} />
 
       <main id="main" className="relative">
-        <Hero onOpenResume={() => setResumeOpen(true)} />
+        <Hero onOpenResume={() => setResumeOpen(true)} botEnabled={heavyReady} />
         <LazySection id="about"><About /></LazySection>
         <LazySection id="skills"><Skills /></LazySection>
         <LazySection id="projects"><Projects /></LazySection>
@@ -74,9 +84,11 @@ export default function App() {
 
       <ResumeModal isOpen={resumeOpen} onClose={() => setResumeOpen(false)} />
 
-      <Suspense fallback={null}>
-        <BotCompanion />
-      </Suspense>
+      {heavyReady && (
+        <Suspense fallback={null}>
+          <BotCompanion />
+        </Suspense>
+      )}
     </div>
     </MotionConfig>
   );
