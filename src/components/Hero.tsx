@@ -96,7 +96,7 @@ export default function Hero({ onOpenResume }: HeroProps) {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className="text-xs font-bold tracking-[0.2em] text-zinc-400 uppercase font-mono"
+                className="text-[11px] sm:text-xs font-bold tracking-[0.1em] sm:tracking-[0.2em] text-zinc-400 uppercase font-mono"
               >
                 {personalInfo.title}
               </motion.p>
@@ -179,7 +179,7 @@ export default function Hero({ onOpenResume }: HeroProps) {
 
           {/* Hero Right: 3D bot (WebGL) or the 2D constellation fallback */}
           {webgl ? (
-            <Suspense fallback={<div aria-hidden="true" className="block lg:col-span-5 order-first lg:order-none h-[250px] sm:h-[380px] lg:h-[520px]" />}>
+            <Suspense fallback={<div aria-hidden="true" className="hidden sm:block lg:col-span-5 sm:order-first lg:order-none sm:h-[380px] lg:h-[520px]" />}>
               <HeroBot />
             </Suspense>
           ) : (
