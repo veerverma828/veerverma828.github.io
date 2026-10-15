@@ -101,17 +101,14 @@ export default function Hero({ onOpenResume }: HeroProps) {
                 {personalInfo.title}
               </motion.p>
               
-              <motion.h1
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-6xl sm:text-7xl md:text-8xl xl:text-9xl font-black tracking-tighter text-white leading-[0.88] uppercase"
+              <h1
+                className="hero-rise text-6xl sm:text-7xl md:text-8xl xl:text-9xl font-black tracking-tighter text-white leading-[0.88] uppercase"
               >
                 <span className="block text-lg sm:text-2xl font-semibold normal-case tracking-tight text-zinc-400 mb-4">Hello, I&apos;m</span>
                 <SplitChars text="Veer" delay={0.15} />
                 <br />
                 <SplitChars text="Verma" delay={0.4} gradient={[[52, 211, 153], [34, 211, 238]]} />
-              </motion.h1>
+              </h1>
             </div>
 
             <motion.p

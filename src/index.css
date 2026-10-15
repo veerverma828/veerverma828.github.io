@@ -127,3 +127,71 @@ html.agent-cursor :is(select, object, iframe, embed) {
 .bot-fade-in {
   animation: bot-fade-in 0.8s ease-out both;
 }
+
+/* ---------- Hero name: compositor-driven letter reveal ---------- */
+@keyframes split-char-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 70px, 0);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    filter: blur(0);
+  }
+}
+.split-char {
+  display: inline-block;
+  /* `backwards`: the element rests in its normal style once finished, so nothing stays promoted. */
+  animation: split-char-in 1s cubic-bezier(0.65, 0, 0.35, 1) backwards;
+}
+@keyframes hero-rise-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 15px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+.hero-rise {
+  animation: hero-rise-in 0.6s ease-out 0.2s backwards;
+}
+
+/* ---------- Skip layout and paint for sections the visitor cannot see yet ----------
+ * Rendering every section at once cost 550-750ms of style/layout/paint on a phone-class CPU, in the
+ * middle of the name reveal. With content-visibility the browser skips off-screen sections until they
+ * are near the viewport. The size is only an estimate until a section has rendered once (`auto`
+ * then remembers the real height); the estimates below are the measured heights at each width, so
+ * scroll positions and nav links stay accurate. */
+main > section:not(#hero) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 908px;
+}
+main > section#about { contain-intrinsic-size: auto 1032px; }
+main > section#skills { contain-intrinsic-size: auto 1357px; }
+main > section#projects { contain-intrinsic-size: auto 2192px; }
+main > section#education { contain-intrinsic-size: auto 923px; }
+main > section#why-work-with-me { contain-intrinsic-size: auto 819px; }
+main > section#tech-stack { contain-intrinsic-size: auto 508px; }
+main > section#contact { contain-intrinsic-size: auto 801px; }
+@media (max-width: 1023px) {
+  main > section#about { contain-intrinsic-size: auto 1157px; }
+  main > section#skills { contain-intrinsic-size: auto 1778px; }
+  main > section#projects { contain-intrinsic-size: auto 3184px; }
+  main > section#education { contain-intrinsic-size: auto 1454px; }
+  main > section#why-work-with-me { contain-intrinsic-size: auto 1136px; }
+  main > section#tech-stack { contain-intrinsic-size: auto 508px; }
+  main > section#contact { contain-intrinsic-size: auto 1357px; }
+}
+@media (max-width: 639px) {
+  main > section#about { contain-intrinsic-size: auto 1706px; }
+  main > section#skills { contain-intrinsic-size: auto 3609px; }
+  main > section#projects { contain-intrinsic-size: auto 5062px; }
+  main > section#education { contain-intrinsic-size: auto 1744px; }
+  main > section#why-work-with-me { contain-intrinsic-size: auto 2084px; }
+  main > section#tech-stack { contain-intrinsic-size: auto 850px; }
+  main > section#contact { contain-intrinsic-size: auto 1503px; }
+}

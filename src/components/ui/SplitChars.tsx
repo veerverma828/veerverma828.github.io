@@ -1,5 +1,3 @@
-import { motion } from 'motion/react';
-
 interface SplitCharsProps {
   text: string;
   delay?: number;
@@ -10,8 +8,13 @@ interface SplitCharsProps {
 }
 
 /**
- * Per-character reveal (rise + de-blur), staggered. The wrapper carries the
- * accessible name so screen readers hear the word once, not letter by letter.
+ * Per-character reveal (rise + de-blur), staggered.
+ *
+ * The motion is a plain CSS animation (`.split-char` in index.css), so the browser runs it on the
+ * compositor. The previous version used JavaScript-driven animation for the rise, which froze whenever
+ * the main thread was busy (for example while the page sections were being rendered).
+ *
+ * The wrapper carries the accessible name so screen readers hear the word once, not letter by letter.
  */
 export default function SplitChars({ text, delay = 0, stagger = 0.05, gradient, className = '' }: SplitCharsProps) {
   const chars = Array.from(text);
@@ -25,16 +28,14 @@ export default function SplitChars({ text, delay = 0, stagger = 0.05, gradient, 
           color = `rgb(${a.map((v, k) => Math.round(v + (b[k] - v) * t)).join(',')})`;
         }
         return (
-          <motion.span
+          <span
             key={i}
             aria-hidden="true"
-            initial={{ opacity: 0, y: 70, filter: 'blur(8px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            transition={{ duration: 1.0, delay: delay + i * stagger, ease: [0.65, 0, 0.35, 1] }}
-            style={{ display: 'inline-block', color }}
+            className="split-char"
+            style={{ animationDelay: `${(delay + i * stagger).toFixed(3)}s`, color }}
           >
             {ch}
-          </motion.span>
+          </span>
         );
       })}
     </span>
