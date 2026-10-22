@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { MutableRefObject } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 
@@ -440,6 +440,24 @@ export function Bot({
 }
 
 /** Calls onReady once, after the first few frames are drawn (shaders compiled, scene on the GPU). */
+/** Pulls the camera back on narrow canvases so the terminal panel beside the bot isn't cropped. */
+const HALF_WIDTH_NEEDED = 3.1;
+function FitCamera({ narrow }: { narrow: boolean }) {
+  const { camera, size } = useThree();
+  useEffect(() => {
+    const cam = camera as THREE.PerspectiveCamera;
+    if (narrow) {
+      // Phone: small corner box, closer camera, no fitting.
+      cam.position.set(0, 0.05, 7.4);
+    } else {
+      const halfTan = Math.tan(THREE.MathUtils.degToRad(cam.fov / 2));
+      cam.position.set(0, -0.1, Math.max(9.2, HALF_WIDTH_NEEDED / (halfTan * (size.width / size.height))));
+    }
+    cam.updateProjectionMatrix();
+  }, [camera, size.width, size.height, narrow]);
+  return null;
+}
+
 function ReadyProbe({ onReady }: { onReady: () => void }) {
   const frames = useRef(0);
   useFrame(() => {
@@ -457,7 +475,13 @@ export default function HeroBot() {
   const pointer = useRef<Pointer>({ x: 0, y: 0 });
   const [inView, setInView] = useState(true);
   // Closer camera on phones so the bot fills its smaller box.
-  const [narrow] = useState(() => typeof window !== 'undefined' && window.innerWidth < 640);
+  const [narrow, setNarrow] = useState(() => typeof window !== 'undefined' && window.innerWidth < 640);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 639px)');
+    const onChange = () => setNarrow(mq.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
   const [reduceMotion] = useState(
     () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   );
@@ -497,7 +521,7 @@ export default function HeroBot() {
       ref={wrapRef}
       aria-hidden="true"
       style={{ visibility: shown ? 'visible' : 'hidden' }}
-      className={`${shown ? 'bot-fade-in ' : ''}absolute right-2 top-24 z-0 w-[132px] h-[150px] pointer-events-none sm:pointer-events-auto sm:static sm:block lg:col-span-5 sm:order-first lg:order-none sm:relative sm:w-full sm:h-[380px] lg:h-[520px]`}
+      className={`${shown ? 'bot-fade-in ' : ''}absolute right-2 top-24 z-0 w-[132px] h-[150px] pointer-events-none sm:pointer-events-auto sm:static sm:block sm:col-span-5 sm:self-start sm:relative sm:w-full sm:h-[380px] md:h-[520px]`}
     >
       {/* soft backlight behind the character */}
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-56 sm:w-72 sm:h-72 rounded-full bg-emerald-500/20 blur-[80px]" />
@@ -513,6 +537,7 @@ export default function HeroBot() {
         <directionalLight position={[-4, 2, -3]} color="#10b981" intensity={2.4} />
         <pointLight position={[0, 0.4, 3.2]} color="#34d399" intensity={6} distance={7} />
         <Bot pointer={pointer} live={!reduceMotion} />
+        <FitCamera narrow={narrow} />
         <ReadyProbe onReady={() => setDrawn(true)} />
       </Canvas>
     </div>

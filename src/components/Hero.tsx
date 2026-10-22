@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { ArrowRight, FileText, Sparkles, Terminal, Code2, Database, Cpu, Atom, Brain, Search, Server, Wand2 } from 'lucide-react';
+import { ArrowRight, FileText, Sparkles, Terminal, Brain, Search } from 'lucide-react';
 import { motion } from 'motion/react';
 import { personalInfo } from '../data';
 import SpotlightGlow from './ui/SpotlightGlow';
@@ -12,7 +12,10 @@ const HeroBot = lazy(() => import('./HeroBot'));
 function hasWebGL(): boolean {
   try {
     const c = document.createElement('canvas');
-    return Boolean(c.getContext('webgl2') || c.getContext('webgl'));
+    const gl = c.getContext('webgl2') || c.getContext('webgl');
+    // Release the probe context right away so it doesn't count against the browser's limit.
+    gl?.getExtension('WEBGL_lose_context')?.loseContext();
+    return Boolean(gl);
   } catch {
     return false;
   }
@@ -72,10 +75,10 @@ export default function Hero({ onOpenResume }: HeroProps) {
       <SpotlightGlow size={640} opacity={0.09} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          
+        <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 md:gap-8 lg:gap-12 items-center">
+
           {/* Hero Left: Information */}
-          <div className="lg:col-span-7 flex flex-col justify-center space-y-6 text-left">
+          <div className="sm:col-span-7 flex flex-col justify-center space-y-6 text-left">
             
             {/* Tag Badge */}
             <motion.div
@@ -176,7 +179,7 @@ export default function Hero({ onOpenResume }: HeroProps) {
 
           {/* Hero Right: 3D bot (WebGL) or the 2D constellation fallback */}
           {webgl ? (
-            <Suspense fallback={<div aria-hidden="true" className="hidden sm:block lg:col-span-5 sm:order-first lg:order-none sm:h-[380px] lg:h-[520px]" />}>
+            <Suspense fallback={<div aria-hidden="true" className="hidden sm:block sm:col-span-5 sm:h-[380px] md:h-[520px]" />}>
               <HeroBot />
             </Suspense>
           ) : (
@@ -185,7 +188,7 @@ export default function Hero({ onOpenResume }: HeroProps) {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.4 }}
             aria-hidden="true"
-            className="hidden sm:flex lg:col-span-5 h-[320px] w-full relative items-center justify-center pointer-events-auto"
+            className="hidden sm:flex sm:col-span-5 h-[320px] w-full relative items-center justify-center pointer-events-auto"
           >
             {/* Ambient Background Circles */}
             <div className="absolute w-72 h-72 rounded-none border border-white/5 animate-[spin_60s_linear_infinite]" />
