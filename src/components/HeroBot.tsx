@@ -83,7 +83,8 @@ const TERM_W = 600;
 const TERM_H = 470;
 
 /** Draws the terminal window with the first `typed` characters of the script. */
-function drawTerminal(ctx: CanvasRenderingContext2D, typed: number, cursorOn: boolean) {
+type Ctx2D = CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
+function drawTerminal(ctx: Ctx2D, typed: number, cursorOn: boolean) {
   ctx.clearRect(0, 0, TERM_W, TERM_H);
   ctx.fillStyle = '#04100c';
   ctx.fillRect(0, 0, TERM_W, TERM_H);
@@ -166,12 +167,16 @@ export function Bot({
   const laptop = useRef<THREE.Group>(null);
   // Terminal drawn into a canvas, shown on the hologram panel
   const terminal = useMemo(() => {
-    const canvas = document.createElement('canvas');
+    // In the 3D worker there is no document, so the terminal is drawn into an OffscreenCanvas.
+    const canvas: HTMLCanvasElement | OffscreenCanvas =
+      typeof document !== 'undefined' && typeof document.createElement === 'function'
+        ? document.createElement('canvas')
+        : new OffscreenCanvas(TERM_W, TERM_H);
     canvas.width = TERM_W;
     canvas.height = TERM_H;
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+    const ctx = canvas.getContext('2d') as Ctx2D;
     drawTerminal(ctx, 0, true);
-    const texture = new THREE.CanvasTexture(canvas);
+    const texture = new THREE.CanvasTexture(canvas as HTMLCanvasElement);
     texture.colorSpace = THREE.SRGBColorSpace;
     return { ctx, texture };
   }, []);
@@ -441,7 +446,11 @@ export function Bot({
 
 /** Calls onReady once, after the first few frames are drawn (shaders compiled, scene on the GPU). */
 /** Pulls the camera back on narrow canvases so the terminal panel beside the bot isn't cropped. */
-const HALF_WIDTH_NEEDED = 3.1;
+// The camera always shows at least this half-width x half-height of the scene, centered, however
+// the canvas is shaped (a "contain" fit). The still poster shown before the 3D loads is captured
+// with the same rule, so it lines up with the live bot when they swap.
+const FIT_HALF_WIDTH = 3.1;
+const FIT_HALF_HEIGHT = 2.8126;
 function FitCamera({ narrow }: { narrow: boolean }) {
   const { camera, size } = useThree();
   useEffect(() => {
@@ -451,7 +460,8 @@ function FitCamera({ narrow }: { narrow: boolean }) {
       cam.position.set(0, 0.05, 7.4);
     } else {
       const halfTan = Math.tan(THREE.MathUtils.degToRad(cam.fov / 2));
-      cam.position.set(0, -0.1, Math.max(9.2, HALF_WIDTH_NEEDED / (halfTan * (size.width / size.height))));
+      const aspect = size.width / size.height;
+      cam.position.set(0, -0.1, Math.max(FIT_HALF_HEIGHT / halfTan, FIT_HALF_WIDTH / (halfTan * aspect)));
     }
     cam.updateProjectionMatrix();
   }, [camera, size.width, size.height, narrow]);
@@ -467,7 +477,33 @@ function ReadyProbe({ onReady }: { onReady: () => void }) {
   return null;
 }
 
-export default function HeroBot() {
+/** Lights, bot, camera fit and ready signal. Rendered by the main-thread canvas or inside the 3D worker. */
+export function HeroBotScene({
+  pointer,
+  live,
+  narrow,
+  onReady,
+}: {
+  pointer: MutableRefObject<Pointer>;
+  live: boolean;
+  narrow: boolean;
+  onReady: () => void;
+}) {
+  return (
+    <>
+      <ambientLight intensity={0.55} />
+      <directionalLight position={[3, 4, 5]} intensity={1.5} />
+      <directionalLight position={[-4, 2, -3]} color="#10b981" intensity={2.4} />
+      <pointLight position={[0, 0.4, 3.2]} color="#34d399" intensity={6} distance={7} />
+      <Bot pointer={pointer} live={live} />
+      <FitCamera narrow={narrow} />
+      <ReadyProbe onReady={onReady} />
+    </>
+  );
+}
+
+/** Main-thread version, used only when the worker version is unavailable or fails. */
+export default function HeroBot({ onReady }: { onReady?: () => void }) {
   // Stays hidden until its first frames are drawn, then fades in: no half-built bot ever shows.
   const [drawn, setDrawn] = useState(false);
   const shown = drawn;
@@ -521,7 +557,7 @@ export default function HeroBot() {
       ref={wrapRef}
       aria-hidden="true"
       style={{ visibility: shown ? 'visible' : 'hidden' }}
-      className={`${shown ? 'bot-fade-in ' : ''}absolute right-2 top-24 z-0 w-[132px] h-[150px] pointer-events-none sm:pointer-events-auto sm:static sm:block sm:col-span-5 sm:self-start sm:relative sm:w-full sm:h-[380px] md:h-[520px]`}
+      className={`${shown ? 'bot-fade-in ' : ''}absolute right-2 top-24 z-0 w-[132px] h-[150px] pointer-events-none sm:pointer-events-auto sm:static sm:block sm:col-start-8 sm:col-span-5 sm:row-start-1 sm:self-start sm:relative sm:w-full sm:h-[380px] md:h-[520px]`}
     >
       {/* soft backlight behind the character */}
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-56 sm:w-72 sm:h-72 rounded-full bg-emerald-500/20 blur-[80px]" />
@@ -532,13 +568,15 @@ export default function HeroBot() {
         gl={{ antialias: true, alpha: true }}
         style={{ background: 'transparent' }}
       >
-        <ambientLight intensity={0.55} />
-        <directionalLight position={[3, 4, 5]} intensity={1.5} />
-        <directionalLight position={[-4, 2, -3]} color="#10b981" intensity={2.4} />
-        <pointLight position={[0, 0.4, 3.2]} color="#34d399" intensity={6} distance={7} />
-        <Bot pointer={pointer} live={!reduceMotion} />
-        <FitCamera narrow={narrow} />
-        <ReadyProbe onReady={() => setDrawn(true)} />
+        <HeroBotScene
+          pointer={pointer}
+          live={!reduceMotion}
+          narrow={narrow}
+          onReady={() => {
+            setDrawn(true);
+            onReady?.();
+          }}
+        />
       </Canvas>
     </div>
   );

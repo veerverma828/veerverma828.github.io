@@ -5,9 +5,14 @@ import { personalInfo } from '../data';
 import SpotlightGlow from './ui/SpotlightGlow';
 import RotatingText from './ui/RotatingText';
 import SplitChars from './ui/SplitChars';
+import { useAfterReveal } from '../hooks/useAfterReveal';
+import { canUseWorkerBot } from './offscreenSupport';
 
 // 3D bot is code-split so it never delays first paint; falls back to the 2D graphic.
+// Two ways to run the 3D bot: in a worker (preferred, starts at once without touching the main thread)
+// or on the main thread (fallback, started after the name reveal because it is heavy).
 const HeroBot = lazy(() => import('./HeroBot'));
+const HeroBotWorkerHost = lazy(() => import('./HeroBotWorkerHost'));
 
 function hasWebGL(): boolean {
   try {
@@ -27,6 +32,12 @@ interface HeroProps {
 
 export default function Hero({ onOpenResume }: HeroProps) {
   const [webgl] = React.useState<boolean>(hasWebGL);
+  // Loading the 3D chunk and starting WebGL during the name reveal makes the letters stutter, so the
+  // bot starts right after the reveal ends (it fades in on its own). Raise or lower the delay to taste.
+  const [workerOk] = React.useState<boolean>(canUseWorkerBot);
+  const [workerFailed, setWorkerFailed] = React.useState(false);
+  const useWorkerBot = workerOk && !workerFailed;
+  const botReady = useAfterReveal(2300);
   const handleScrollToContact = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const contactElem = document.getElementById('contact');
@@ -178,10 +189,16 @@ export default function Hero({ onOpenResume }: HeroProps) {
           </div>
 
           {/* Hero Right: 3D bot (WebGL) or the 2D constellation fallback */}
-          {webgl ? (
-            <Suspense fallback={<div aria-hidden="true" className="hidden sm:block sm:col-span-5 sm:h-[380px] md:h-[520px]" />}>
-              <HeroBot />
+          {webgl && useWorkerBot ? (
+            <Suspense fallback={null}>
+              <HeroBotWorkerHost onFail={() => setWorkerFailed(true)} />
             </Suspense>
+          ) : webgl ? (
+            botReady && (
+              <Suspense fallback={null}>
+                <HeroBot />
+              </Suspense>
+            )
           ) : (
           <motion.div
             initial={{ opacity: 0, scale: 0.98 }}

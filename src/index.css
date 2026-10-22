@@ -146,6 +146,22 @@ html.agent-cursor :is(select, object, iframe, embed) {
   /* `backwards`: the element rests in its normal style once finished, so nothing stays promoted. */
   animation: split-char-in 1s cubic-bezier(0.65, 0, 0.35, 1) backwards;
 }
+/* Phones and small tablets: same rise and fade, no blur (blur on large text is costly on mobile GPUs). */
+@keyframes split-char-in-lite {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 50px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+@media (max-width: 767px) {
+  .split-char {
+    animation-name: split-char-in-lite;
+  }
+}
 @keyframes hero-rise-in {
   from {
     opacity: 0;
@@ -188,8 +204,8 @@ main > section#contact { contain-intrinsic-size: auto 801px; }
 }
 @media (max-width: 639px) {
   main > section#about { contain-intrinsic-size: auto 1706px; }
-  main > section#skills { contain-intrinsic-size: auto 3609px; }
-  main > section#projects { contain-intrinsic-size: auto 5062px; }
+  main > section#skills { contain-intrinsic-size: auto 2290px; }
+  main > section#projects { contain-intrinsic-size: auto 3460px; }
   main > section#education { contain-intrinsic-size: auto 1744px; }
   main > section#why-work-with-me { contain-intrinsic-size: auto 2084px; }
   main > section#tech-stack { contain-intrinsic-size: auto 850px; }

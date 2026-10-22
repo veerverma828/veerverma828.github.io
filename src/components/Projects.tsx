@@ -5,113 +5,61 @@ import { projects, personalInfo } from '../data';
 import { Project } from '../types';
 import SpotlightGlow from './ui/SpotlightGlow';
 
-export default function Projects() {
+// On phones only the first few cards show until the visitor asks for the rest.
+const MOBILE_VISIBLE_PROJECTS = 3;
 
-  // Pure CSS Render helper for Premium Visual Mockup
+export default function Projects() {
+  const [showAllMobile, setShowAllMobile] = React.useState(false);
+
+  // Pure CSS render helper for the visual mockups. Decorative only (aria-hidden); all text is >=10px.
   const renderVisualMockup = (placeholderType: string, title: string) => {
     switch (placeholderType) {
       case 'movie-discovery':
         return (
-          <div className="w-full h-48 bg-[#0B0D14] rounded-xl relative p-2 overflow-hidden flex flex-col font-sans border border-slate-800/60">
-            {/* Top Bar Navigation Mockup */}
-            <div className="relative z-10 flex items-start justify-between mb-2">
-              <div className="w-5" /> {/* Spacer for centering */}
-              <div className="flex flex-col items-center">
-                <div className="flex flex-col items-center leading-none">
-                  <span className="text-[12px] font-black italic text-white tracking-widest drop-shadow-md">TORRENT</span>
-                  <div className="flex items-center -mt-0.5">
-                    <ArrowRight className="w-2 h-2 text-white rotate-90 mr-0.5 drop-shadow-md" />
-                    <span className="text-[6px] font-bold text-white tracking-[0.2em] drop-shadow-md">DEBRID</span>
-                  </div>
-                </div>
-                <div className="flex bg-[#1A1C23] rounded-full mt-1.5 p-0.5">
-                  <span className="px-2 py-0.5 bg-[#2A2D35] text-white rounded-full text-[5px] font-medium">Real-Debrid</span>
-                  <span className="px-2 py-0.5 text-slate-400 text-[5px] font-medium">Torbox</span>
-                </div>
-              </div>
+          <div className="w-full h-48 bg-[#0B0D14] rounded-xl relative p-3 overflow-hidden flex flex-col font-sans border border-slate-800/60">
+            {/* Top bar */}
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[12px] font-black italic text-white tracking-widest">MEDIA<span className="text-red-500">+</span></span>
               <div className="w-5 h-5 rounded-full bg-[#1A1C23] flex items-center justify-center text-slate-400 border border-slate-700/50">
                 <Settings className="w-3 h-3" />
               </div>
             </div>
 
-            {/* Search Bar */}
-            <div className="relative z-10 mx-auto w-[85%] h-5 bg-[#1A1C23] border border-slate-700/50 rounded-full flex items-center justify-between px-2 mb-1.5">
+            {/* Search bar */}
+            <div className="h-6 bg-[#1A1C23] border border-slate-700/50 rounded-full flex items-center justify-between px-2.5 mb-2">
               <div className="flex items-center space-x-1.5 text-slate-400">
-                <Search className="w-2.5 h-2.5" />
-                <span className="text-[6px]">Search movies or series...</span>
+                <Search className="w-3 h-3" />
+                <span className="text-[10px]">Search movies or series...</span>
               </div>
-              <div className="w-3.5 h-3.5 bg-[#2A2D35] rounded-full flex items-center justify-center">
-                <ArrowRight className="w-2 h-2 text-white" />
-              </div>
+              <ArrowRight className="w-3 h-3 text-white" />
             </div>
 
-            {/* Hero Banner */}
-            <div className="relative z-10 h-[76px] w-[95%] mx-auto rounded-lg bg-gradient-to-r from-[#11131A] to-[#1A1C23] overflow-hidden border border-slate-700/50 p-1.5 flex flex-col justify-center mb-1.5 shrink-0">
+            {/* Featured banner */}
+            <div className="relative flex-1 min-h-0 rounded-lg bg-gradient-to-r from-[#11131A] to-[#1A1C23] border border-slate-700/50 px-2.5 py-2 flex flex-col justify-center mb-2">
               <div className="absolute top-0 right-0 bottom-0 w-2/3 bg-gradient-to-l from-[#3b3a32]/20 to-transparent pointer-events-none" />
-              
-              <div className="relative z-10 w-[75%]">
-                <h4 className="text-[10px] font-black text-white leading-tight mb-0.5">Breaking Bad</h4>
-                
-                {/* Badges */}
-                <div className="flex flex-wrap gap-1 mb-1 items-center">
-                  <div className="flex items-center space-x-0.5 border border-yellow-600/50 px-1 rounded-sm text-[4px] text-yellow-500 bg-yellow-900/20">
-                    <Star className="w-1.5 h-1.5 fill-current" />
-                    <span className="font-bold">9.5</span>
-                  </div>
-                  <span className="bg-[#1A1C23] border border-slate-700/80 px-1 rounded-sm text-[4px] text-slate-300">2008–2013</span>
-                  <span className="bg-[#1A1C23] border border-[#1d4ed8]/50 px-1 rounded-sm text-[4px] text-blue-400">Crime</span>
-                  <span className="bg-[#1A1C23] border border-[#1d4ed8]/50 px-1 rounded-sm text-[4px] text-blue-400">Drama</span>
-                  <span className="bg-[#1A1C23] border border-[#1d4ed8]/50 px-1 rounded-sm text-[4px] text-blue-400">Thriller</span>
-                </div>
-
-                {/* Synopsis */}
-                <p className="text-[4.5px] text-slate-300 leading-tight mb-1.5 line-clamp-2">
-                  A chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine with a former student to secure his family's future.
-                </p>
-
-                {/* Buttons */}
-                <div className="flex space-x-1.5">
-                  <div className="bg-white text-black px-2 py-0.5 rounded-sm text-[4.5px] font-bold flex items-center space-x-0.5">
-                    <Play className="w-2 h-2 fill-current" />
-                    <span>Play</span>
-                  </div>
-                  <div className="bg-[#2A2D35] text-white border border-slate-600/50 px-2 py-0.5 rounded-sm text-[4.5px] font-bold flex items-center space-x-0.5">
-                    <Info className="w-2 h-2" />
-                    <span>More Info</span>
-                  </div>
-                </div>
+              <h4 className="relative text-[12px] font-black text-white leading-tight mb-1">Breaking Bad</h4>
+              <div className="relative flex items-center gap-1.5 mb-1.5">
+                <span className="flex items-center gap-0.5 border border-yellow-600/50 px-1 rounded-sm text-[10px] text-yellow-500 bg-yellow-900/20 font-bold">
+                  <Star className="w-2.5 h-2.5 fill-current" />9.5
+                </span>
+                <span className="border border-[#1d4ed8]/50 bg-[#1A1C23] px-1 rounded-sm text-[10px] text-blue-400">Crime</span>
+                <span className="border border-[#1d4ed8]/50 bg-[#1A1C23] px-1 rounded-sm text-[10px] text-blue-400">Drama</span>
               </div>
-
-              {/* Carousel Dots */}
-              <div className="absolute bottom-1.5 right-2 flex space-x-0.5">
-                <div className="w-1.5 h-0.5 bg-red-600 rounded-full" />
-                <div className="w-0.5 h-0.5 bg-slate-500 rounded-full" />
-                <div className="w-0.5 h-0.5 bg-slate-500 rounded-full" />
-                <div className="w-0.5 h-0.5 bg-slate-500 rounded-full" />
-                <div className="w-0.5 h-0.5 bg-slate-500 rounded-full" />
+              <div className="relative flex gap-1.5">
+                <span className="bg-white text-black px-2 py-0.5 rounded-sm text-[10px] font-bold flex items-center gap-1">
+                  <Play className="w-2.5 h-2.5 fill-current" />Play
+                </span>
+                <span className="bg-[#2A2D35] text-white border border-slate-600/50 px-2 py-0.5 rounded-sm text-[10px] font-bold flex items-center gap-1">
+                  <Info className="w-2.5 h-2.5" />Info
+                </span>
               </div>
             </div>
 
-            {/* Trending Movies Snippet */}
-            <div className="relative z-10 px-1">
-              <h5 className="text-[6px] font-bold text-white mb-1">Trending Movies</h5>
-              <div className="flex space-x-1.5 overflow-hidden">
-                <div className="w-8 h-10 bg-gradient-to-br from-purple-900/30 to-blue-900/30 rounded border border-slate-700 shrink-0 relative overflow-hidden">
-                  <div className="absolute top-0.5 right-0.5 bg-black/80 text-yellow-500 text-[4px] px-0.5 rounded-sm flex items-center font-bold"><Star className="w-1 h-1 fill-current mr-[1px]"/>6.9</div>
-                </div>
-                <div className="w-8 h-10 bg-gradient-to-br from-indigo-900/30 to-slate-800 rounded border border-slate-700 shrink-0 relative overflow-hidden">
-                  <div className="absolute top-0.5 right-0.5 bg-black/80 text-yellow-500 text-[4px] px-0.5 rounded-sm flex items-center font-bold"><Star className="w-1 h-1 fill-current mr-[1px]"/>8.0</div>
-                </div>
-                <div className="w-8 h-10 bg-gradient-to-br from-emerald-900/20 to-slate-800 rounded border border-slate-700 shrink-0 relative overflow-hidden">
-                  <div className="absolute top-0.5 right-0.5 bg-black/80 text-yellow-500 text-[4px] px-0.5 rounded-sm flex items-center font-bold"><Star className="w-1 h-1 fill-current mr-[1px]"/>6.7</div>
-                </div>
-                <div className="w-8 h-10 bg-gradient-to-br from-cyan-900/30 to-blue-900/30 rounded border border-slate-700 shrink-0 relative overflow-hidden">
-                  <div className="absolute top-0.5 right-0.5 bg-black/80 text-yellow-500 text-[4px] px-0.5 rounded-sm flex items-center font-bold"><Star className="w-1 h-1 fill-current mr-[1px]"/>8.2</div>
-                </div>
-                <div className="w-8 h-10 bg-gradient-to-br from-yellow-900/30 to-slate-800 rounded border border-slate-700 shrink-0 relative overflow-hidden">
-                  <div className="absolute top-0.5 right-0.5 bg-black/80 text-yellow-500 text-[4px] px-0.5 rounded-sm flex items-center font-bold"><Star className="w-1 h-1 fill-current mr-[1px]"/>7.0</div>
-                </div>
-              </div>
+            {/* Poster row */}
+            <div className="flex gap-1.5 overflow-hidden shrink-0">
+              {['from-purple-900/30 to-blue-900/30', 'from-indigo-900/30 to-slate-800', 'from-emerald-900/20 to-slate-800', 'from-cyan-900/30 to-blue-900/30', 'from-yellow-900/30 to-slate-800', 'from-rose-900/30 to-slate-800'].map((g) => (
+                <div key={g} className={`w-9 h-7 bg-gradient-to-br ${g} rounded border border-slate-700 shrink-0`} />
+              ))}
             </div>
           </div>
         );
@@ -119,96 +67,86 @@ export default function Projects() {
       case 'doctor-booking':
         return (
           <div className="w-full h-48 bg-slate-950 rounded-xl relative p-3 overflow-hidden flex flex-col justify-between border border-slate-800">
-            {/* Top Bar Mockup */}
-            <div className="flex items-center justify-between border-b border-slate-850 pb-2">
-              <div className="flex items-center space-x-1.5">
-                <span className="text-[9px] font-sans font-bold text-teal-400">⚡ DocAppoint</span>
-              </div>
-              <span className="text-[7px] bg-teal-500/10 text-teal-350 px-1.5 py-0.5 rounded font-mono">Live Logs</span>
+            {/* Top bar */}
+            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+              <span className="text-[11px] font-sans font-bold text-teal-400">⚡ DocAppoint</span>
+              <span className="text-[10px] bg-teal-500/10 text-teal-300 px-1.5 py-0.5 rounded font-mono">Live Logs</span>
             </div>
 
-            {/* Profile / Selector */}
-            <div className="flex items-center space-x-2 my-1">
-              <div className="w-7 text-[8px] h-7 rounded-full bg-teal-500/15 border border-teal-500 flex items-center justify-center font-bold text-teal-300">
+            {/* Profile */}
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 shrink-0 rounded-full bg-teal-500/15 border border-teal-500 flex items-center justify-center text-[10px] font-bold text-teal-300">
                 Dr.
               </div>
-              <div className="flex-1 space-y-0.5">
-                <h4 className="text-[10px] font-bold text-white leading-tight">Dr. Veer Verma, MD</h4>
-                <p className="text-[7px] text-slate-450">Cardiology Specialist • Available Today</p>
+              <div className="flex-1 min-w-0">
+                <h4 className="text-[12px] font-bold text-white leading-tight truncate">Dr. Veer Verma, MD</h4>
+                <p className="text-[10px] text-slate-400 truncate">Cardiology • Available today</p>
               </div>
-              <span className="text-[8px] bg-slate-800 text-teal-400 px-1.5 py-0.5 rounded font-mono font-bold border border-slate-700">9:00 AM</span>
+              <span className="text-[10px] bg-slate-800 text-teal-400 px-1.5 py-0.5 rounded font-mono font-bold border border-slate-700">9:00 AM</span>
             </div>
 
-            {/* Mini Calendar Scheduler Grid */}
-            <div className="grid grid-cols-6 gap-1 pr-1">
+            {/* Mini calendar */}
+            <div className="grid grid-cols-6 gap-1">
               {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, ix) => (
-                <div key={day} className={`p-1 rounded text-center border transition-all ${
-                  ix === 2 
-                    ? 'bg-teal-505/20 border-teal-500 text-teal-300' 
-                    : ix === 1 
-                    ? 'bg-red-500/10 border-red-500/20 text-red-400 opacity-60' 
-                    : 'bg-slate-900 border-slate-850 text-slate-400'
+                <div key={day} className={`py-1 rounded text-center border ${
+                  ix === 2
+                    ? 'bg-teal-500/20 border-teal-500 text-teal-300'
+                    : ix === 1
+                    ? 'bg-red-500/10 border-red-500/20 text-red-400 opacity-60'
+                    : 'bg-slate-900 border-slate-800 text-slate-400'
                 }`}>
-                  <p className="text-[6px] uppercase font-mono font-black">{day}</p>
-                  <p className="text-[8px] font-bold mt-0.5">{16 + ix}</p>
+                  <p className="text-[10px] uppercase font-mono font-black leading-tight">{day}</p>
+                  <p className="text-[10px] font-bold leading-tight">{16 + ix}</p>
                 </div>
               ))}
             </div>
 
-            {/* Bottom Status bar */}
-            <div className="flex items-center justify-between text-[7px] text-slate-450 border-t border-slate-850 pt-1">
-              <span className="flex items-center text-[7px]"><Clock className="w-2.5 h-2.5 text-teal-500 mr-1" /> Slot Confirmed</span>
-              <span className="text-teal-400 font-mono font-bold uppercase text-[7px]">Feedback 4.9★</span>
+            {/* Status bar */}
+            <div className="flex items-center justify-between text-[10px] text-slate-400 border-t border-slate-800 pt-1.5">
+              <span className="flex items-center"><Clock className="w-3 h-3 text-teal-500 mr-1" />Slot confirmed</span>
+              <span className="text-teal-400 font-mono font-bold uppercase">4.9★</span>
             </div>
           </div>
         );
 
       case 'resume-builder':
         return (
-          <div className="w-full h-48 bg-slate-950 rounded-xl relative p-3 overflow-hidden flex flex-col justify-between border border-slate-800">
-            {/* Split layout: Edit Panel vs Preview Sheet */}
+          <div className="w-full h-48 bg-slate-950 rounded-xl relative p-3 overflow-hidden border border-slate-800">
             <div className="grid grid-cols-12 gap-3 h-full">
-              
-              {/* Left Side: Form entry simulation */}
-              <div className="col-span-6 border-r border-slate-850 pr-2 flex flex-col justify-between">
-                <span className="text-[7px] text-slate-550 font-bold uppercase font-mono">Draft Fields</span>
-                <div className="space-y-1">
-                  <div className="space-y-0.5">
-                    <div className="text-[6px] text-slate-450">Full Name</div>
-                    <div className="h-3 bg-slate-900 rounded border border-slate-800 text-[6px] text-white flex items-center px-1"> Veer Verma</div>
+              {/* Form side */}
+              <div className="col-span-6 border-r border-slate-800 pr-2 flex flex-col justify-between">
+                <span className="text-[10px] text-slate-400 font-bold uppercase font-mono">Draft fields</span>
+                <div className="space-y-1.5">
+                  <div>
+                    <div className="text-[10px] text-slate-400 leading-tight">Full name</div>
+                    <div className="h-4 bg-slate-900 rounded border border-slate-800 text-[10px] text-white flex items-center px-1 truncate">Veer Verma</div>
                   </div>
-                  <div className="space-y-0.5">
-                    <div className="text-[6px] text-slate-450">Primary Role</div>
-                    <div className="h-3 bg-slate-900 rounded border border-slate-800 text-[6px] text-slate-400 flex items-center px-1 truncate"> Full Stack Engineer</div>
+                  <div>
+                    <div className="text-[10px] text-slate-400 leading-tight">Role</div>
+                    <div className="h-4 bg-slate-900 rounded border border-slate-800 text-[10px] text-slate-300 flex items-center px-1 truncate">Full Stack Engineer</div>
                   </div>
                 </div>
-                <div className="p-1 rounded bg-teal-500/10 border border-teal-500/20 text-[6px] text-teal-300 font-bold text-center">
-                  ✨ Instant PDF Print Ready
-                </div>
+                <div className="py-0.5 rounded bg-teal-500/10 border border-teal-500/20 text-[10px] text-teal-300 font-bold text-center truncate">✨ PDF ready</div>
               </div>
 
-              {/* Right Side: Virtual Document Sheet preview */}
-              <div className="col-span-6 bg-white dark:bg-white rounded p-1.5 text-slate-900 flex flex-col justify-between shadow-md">
+              {/* Document preview */}
+              <div className="col-span-6 bg-white rounded p-1.5 text-slate-900 flex flex-col justify-between shadow-md">
                 <div className="space-y-1">
-                  <div className="border-b-[0.5px] border-slate-300 pb-1 text-center">
-                    <h5 className="text-[9px] font-black text-slate-900 leading-tight">VEER VERMA</h5>
-                    <p className="text-[5px] text-teal-600 font-mono tracking-widest font-bold">FULL STACK DEVELOPER</p>
+                  <div className="border-b border-slate-300 pb-1 text-center">
+                    <h5 className="text-[11px] font-black text-slate-900 leading-tight">VEER VERMA</h5>
+                    <p className="text-[10px] text-teal-700 font-mono font-bold truncate">FULL STACK DEV</p>
                   </div>
-                  <div className="space-y-0.5">
-                    <p className="text-[5px] font-extrabold text-slate-700 uppercase">Core Skills</p>
-                    <div className="flex flex-wrap gap-0.5">
-                      <span className="text-[4px] bg-slate-100 text-slate-800 px-0.5 rounded">MERN</span>
-                      <span className="text-[4px] bg-slate-100 text-slate-800 px-0.5 rounded">REST APIs</span>
-                      <span className="text-[4px] bg-slate-100 text-slate-800 px-0.5 rounded">Linux</span>
-                    </div>
+                  <p className="text-[10px] font-extrabold text-slate-700 uppercase leading-tight">Core skills</p>
+                  <div className="flex flex-wrap gap-1">
+                    <span className="text-[10px] bg-slate-100 text-slate-800 px-1 rounded leading-tight">MERN</span>
+                    <span className="text-[10px] bg-slate-100 text-slate-800 px-1 rounded leading-tight">REST</span>
                   </div>
                 </div>
-                <div className="flex justify-between items-center pt-1 border-t-[0.5px] border-slate-100">
-                  <span className="text-[4px] text-slate-400 font-mono">veerverma.pdf</span>
-                  <FileCheck className="w-2 h-2 text-teal-650" />
+                <div className="flex justify-between items-center pt-1 border-t border-slate-200">
+                  <span className="text-[10px] text-slate-500 font-mono">veerverma.pdf</span>
+                  <FileCheck className="w-3 h-3 text-teal-700" />
                 </div>
               </div>
-
             </div>
           </div>
         );
@@ -217,50 +155,30 @@ export default function Projects() {
         return (
           <div className="w-full h-48 bg-[#0B0D14] rounded-xl relative p-3 overflow-hidden flex flex-col border border-slate-800/60 font-sans">
             {/* Header */}
-            <div className="relative z-10 text-center mb-2">
-              <h4 className="text-[11px] font-bold text-white tracking-wide">Secure P2P File Sharing</h4>
-              <p className="text-[6px] text-slate-400 mt-0.5 leading-tight px-4">
-                Transfer files directly browser-to-browser. Encrypted, private, with zero size limits.
-              </p>
+            <div className="text-center mb-2">
+              <h4 className="text-[12px] font-bold text-white tracking-wide">Secure P2P File Sharing</h4>
+              <p className="text-[10px] text-slate-400 leading-tight">Browser-to-browser. Encrypted and private.</p>
             </div>
 
             {/* Tabs */}
-            <div className="relative z-10 flex border border-slate-800 rounded-md overflow-hidden mb-2">
-              <div className="flex-1 bg-violet-600 text-white text-[7px] font-bold text-center py-1">Home</div>
-              <div className="flex-1 bg-transparent text-slate-400 text-[7px] font-bold text-center py-1">Apps</div>
+            <div className="flex border border-slate-800 rounded-md overflow-hidden mb-2">
+              <div className="flex-1 bg-violet-600 text-white text-[10px] font-bold text-center py-0.5">Home</div>
+              <div className="flex-1 text-slate-400 text-[10px] font-bold text-center py-0.5">Apps</div>
             </div>
 
-            {/* Drag & Drop Area */}
-            <div className="relative z-10 border border-dashed border-violet-900/50 rounded-lg bg-violet-950/10 flex flex-col items-center justify-center py-2 mb-2">
-              <div className="w-6 h-6 rounded-md bg-violet-900/30 flex items-center justify-center mb-1">
-                <Upload className="w-3.5 h-3.5 text-violet-400" />
-              </div>
-              <span className="text-[8px] font-bold text-white mb-0.5">Drag & drop your files here</span>
-              <span className="text-[5px] text-slate-500 mb-1.5">or click to browse files from your device</span>
-              <span className="text-[5px] font-semibold text-violet-400 border border-violet-900 bg-violet-950/30 px-2 py-0.5 rounded-full">NO FILE SIZE LIMITS</span>
+            {/* Drop area */}
+            <div className="flex-1 min-h-0 border border-dashed border-violet-900/60 rounded-lg bg-violet-950/10 flex flex-col items-center justify-center gap-1 mb-2">
+              <Upload className="w-4 h-4 text-violet-400" />
+              <span className="text-[11px] font-bold text-white">Drag &amp; drop your files here</span>
+              <span className="text-[10px] font-semibold text-violet-300 border border-violet-900 bg-violet-950/30 px-2 rounded-full">NO SIZE LIMITS</span>
             </div>
 
-            {/* Receive Section */}
-            <div className="relative z-10 mt-auto">
-              <div className="flex items-center justify-center mb-1.5">
-                <div className="h-[1px] w-12 bg-slate-800" />
-                <span className="text-[5px] text-slate-500 px-2">or receive a file</span>
-                <div className="h-[1px] w-12 bg-slate-800" />
+            {/* Receive row */}
+            <div className="flex gap-1 shrink-0">
+              <div className="flex-1 min-w-0 border border-slate-800 rounded flex items-center bg-[#0F111A] px-1.5 h-6">
+                <span className="text-[10px] text-slate-400 font-mono truncate">Room code, e.g. 4D8G2X</span>
               </div>
-              
-              <div className="flex space-x-1 mb-1.5">
-                <div className="flex-1 border border-slate-800 rounded flex items-center bg-[#0F111A] px-1.5 h-5">
-                  <span className="text-slate-500 text-[6px] mr-1">↓</span>
-                  <span className="text-[6px] text-slate-600 font-mono flex-1">Enter Room Code (e.g. 4D8G2X)</span>
-                </div>
-                <div className="w-5 h-5 border border-slate-800 rounded flex items-center justify-center bg-[#0F111A]">
-                  <span className="text-[6px] text-slate-500 font-mono">QR</span>
-                </div>
-              </div>
-              
-              <div className="w-full h-5 border border-slate-800 rounded flex items-center justify-center bg-[#0F111A] text-white text-[7px] font-bold">
-                Connect & Download
-              </div>
+              <div className="px-2 h-6 border border-slate-800 rounded flex items-center bg-[#0F111A] text-white text-[10px] font-bold">Connect</div>
             </div>
           </div>
         );
@@ -269,37 +187,37 @@ export default function Projects() {
         return (
           <div className="w-full h-48 bg-[#0B0D14] rounded-xl relative p-3 overflow-hidden flex flex-col border border-slate-800/60 font-sans">
             {/* Header */}
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-bold text-white tracking-wide">Querywise</span>
-              <span className="text-[5px] font-mono text-emerald-400 border border-emerald-900 bg-emerald-950/30 px-1.5 py-0.5 rounded-full">LOCAL · QWEN 2.5 7B</span>
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[12px] font-bold text-white tracking-wide">Querywise</span>
+              <span className="text-[10px] font-mono text-emerald-400 border border-emerald-900 bg-emerald-950/30 px-1.5 rounded-full">LOCAL · QWEN 2.5 7B</span>
             </div>
 
             {/* User message */}
-            <div className="self-end max-w-[75%] bg-emerald-600/90 text-white text-[7px] px-2 py-1 rounded-md mb-1.5">
-              Research RAG evaluation and save a report
+            <div className="self-end max-w-[85%] bg-emerald-600/90 text-white text-[10px] px-2 py-0.5 rounded-md mb-1.5 truncate">
+              Research RAG evaluation, save a report
             </div>
 
-            {/* Agent step timeline */}
+            {/* Agent steps */}
             <div className="space-y-1 mb-1.5">
-              <div className="flex items-center space-x-1.5 border border-slate-800 bg-[#0F111A] rounded px-1.5 py-1">
-                <Search className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
-                <span className="text-[6px] text-slate-300 font-mono flex-1 truncate">web_search("RAG evaluation metrics")</span>
-                <Check className="w-2.5 h-2.5 text-emerald-500 shrink-0" />
+              <div className="flex items-center space-x-1.5 border border-slate-800 bg-[#0F111A] rounded px-1.5 py-0.5">
+                <Search className="w-3 h-3 text-emerald-400 shrink-0" />
+                <span className="text-[10px] text-slate-300 font-mono flex-1 truncate">web_search("RAG evaluation")</span>
+                <Check className="w-3 h-3 text-emerald-500 shrink-0" />
               </div>
-              <div className="flex items-center space-x-1.5 border border-slate-800 bg-[#0F111A] rounded px-1.5 py-1">
-                <FileText className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
-                <span className="text-[6px] text-slate-300 font-mono flex-1 truncate">search_documents(top_k=2)</span>
-                <Check className="w-2.5 h-2.5 text-emerald-500 shrink-0" />
+              <div className="flex items-center space-x-1.5 border border-slate-800 bg-[#0F111A] rounded px-1.5 py-0.5">
+                <FileText className="w-3 h-3 text-emerald-400 shrink-0" />
+                <span className="text-[10px] text-slate-300 font-mono flex-1 truncate">search_documents(top_k=2)</span>
+                <Check className="w-3 h-3 text-emerald-500 shrink-0" />
               </div>
             </div>
 
             {/* Approval card */}
-            <div className="mt-auto border border-amber-700/40 bg-amber-950/10 rounded-md p-1.5">
-              <div className="text-[6px] font-bold text-amber-300 mb-1">Approval needed: save_report</div>
-              <div className="flex space-x-1">
-                <span className="text-[6px] font-bold text-black bg-emerald-500 px-2 py-0.5 rounded">Approve</span>
-                <span className="text-[6px] font-bold text-slate-300 border border-slate-700 px-2 py-0.5 rounded">Edit</span>
-                <span className="text-[6px] font-bold text-slate-300 border border-slate-700 px-2 py-0.5 rounded">Reject</span>
+            <div className="mt-auto border border-amber-700/40 bg-amber-950/10 rounded-md px-1.5 py-1">
+              <div className="text-[10px] font-bold text-amber-300 mb-1 truncate">Approval needed: save_report</div>
+              <div className="flex gap-1">
+                <span className="text-[10px] font-bold text-black bg-emerald-500 px-2 rounded">Approve</span>
+                <span className="text-[10px] font-bold text-slate-300 border border-slate-700 px-2 rounded">Edit</span>
+                <span className="text-[10px] font-bold text-slate-300 border border-slate-700 px-2 rounded">Reject</span>
               </div>
             </div>
           </div>
@@ -359,7 +277,7 @@ export default function Projects() {
                 exit={{ opacity: 0, scale: 0.96 }}
                 transition={{ duration: 0.25 }}
                 key={project.id}
-                className="relative flex flex-col bg-[#0b0b0b] border border-white/5 rounded-none hover:border-emerald-500/40 hover:shadow-[0_20px_60px_-30px_rgba(16,185,129,0.35)] transition-[border-color,box-shadow] duration-300 overflow-hidden group"
+                className={`${!showAllMobile && idx >= MOBILE_VISIBLE_PROJECTS ? 'hidden md:flex' : 'flex'} relative flex-col bg-[#0b0b0b] border border-white/5 rounded-none hover:border-emerald-500/40 hover:shadow-[0_20px_60px_-30px_rgba(16,185,129,0.35)] transition-[border-color,box-shadow] duration-300 overflow-hidden group`}
               >
                 <SpotlightGlow />
                 
@@ -424,7 +342,7 @@ export default function Projects() {
                         rel="noopener noreferrer"
                         referrerPolicy="no-referrer"
                         aria-label={`Live demo of ${project.title} (opens in a new tab)`}
-                        className="flex-1 flex items-center justify-center space-x-1.5 px-3 py-3 bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold uppercase tracking-wider rounded-none transition-all duration-200"
+                        className="flex-1 flex items-center justify-center space-x-1.5 px-3 py-3 min-h-[44px] bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold uppercase tracking-wider rounded-none transition-all duration-200"
                       >
                         <span>Live Demo</span>
                         <ExternalLink className="w-3.5 h-3.5" />
@@ -432,7 +350,7 @@ export default function Projects() {
                     ) : (
                       <span
                         aria-disabled="true"
-                        className="flex-1 flex items-center justify-center space-x-1.5 px-3 py-2 bg-zinc-900 border border-white/10 text-zinc-400 text-xs font-bold uppercase tracking-wider rounded-none cursor-not-allowed select-none"
+                        className="flex-1 flex items-center justify-center space-x-1.5 px-3 py-2 min-h-[44px] bg-zinc-900 border border-white/10 text-zinc-400 text-xs font-bold uppercase tracking-wider rounded-none cursor-not-allowed select-none"
                       >
                         <Clock className="w-3.5 h-3.5" />
                         <span>Coming Soon..</span>
@@ -445,7 +363,7 @@ export default function Projects() {
                         rel="noopener noreferrer"
                         referrerPolicy="no-referrer"
                         aria-label={`Source code for ${project.title} on GitHub (opens in a new tab)`}
-                        className="flex items-center justify-center p-3 bg-zinc-900 border border-white/5 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded-none transition-all duration-200"
+                        className="flex items-center justify-center p-3 min-h-[44px] min-w-[44px] bg-zinc-900 border border-white/5 hover:bg-zinc-800 text-zinc-400 hover:text-white rounded-none transition-all duration-200"
                       >
                         <Github className="w-4 h-4" />
                       </a>
@@ -458,6 +376,19 @@ export default function Projects() {
             ))}
           </AnimatePresence>
         </motion.div>
+
+        {projects.length > MOBILE_VISIBLE_PROJECTS && (
+          <div className="mt-8 text-center md:hidden">
+            <button
+              type="button"
+              onClick={() => setShowAllMobile((v) => !v)}
+              aria-expanded={showAllMobile}
+              className="px-6 py-3 min-h-[44px] bg-zinc-900 border border-white/10 hover:border-emerald-500/40 text-emerald-400 text-xs font-bold uppercase tracking-widest cursor-pointer transition-colors"
+            >
+              {showAllMobile ? 'Show fewer projects' : `Show all ${projects.length} projects`}
+            </button>
+          </div>
+        )}
 
         {/* Call to action for secondary assets */}
         <div className="mt-16 text-center">

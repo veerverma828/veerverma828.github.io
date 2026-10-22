@@ -80,7 +80,7 @@ export default function Header({ onOpenResume }: HeaderProps) {
           <a
             href="#hero"
             onClick={(e) => handleNavClick(e, '#hero')}
-            className="flex items-center gap-3 cursor-pointer group"
+            className="flex items-center gap-3 min-h-[44px] cursor-pointer group"
           >
             <div className="w-8 h-8 bg-emerald-500 flex items-center justify-center font-black text-black rounded-xs transition-transform duration-300 group-hover:scale-105">
               V

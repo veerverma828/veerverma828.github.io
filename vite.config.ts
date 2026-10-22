@@ -5,7 +5,11 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss()],
+    // The bot scene runs inside a worker, where the dev-only React Refresh helper (it needs `window`)
+    // cannot load, so those two files are left out of hot reload.
+    plugins: [react({exclude: [/heroBot\.worker\.tsx$/, /HeroBot\.tsx$/]}), tailwindcss()],
+    // The hero bot's 3D runs in a module worker.
+    worker: {format: 'es' as const},
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),

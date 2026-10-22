@@ -266,7 +266,7 @@ export default function Education() {
                         <button
                           onClick={() => toggleInlineCert(ach.title)}
                           aria-expanded={Boolean(revealedCertTitles[ach.title])}
-                          className={`inline-flex items-center space-x-1.5 px-3 py-2.5 font-mono text-[11px] font-bold uppercase tracking-wider transition-all border ${
+                          className={`inline-flex items-center min-h-[44px] space-x-1.5 px-3 py-2.5 font-mono text-[11px] font-bold uppercase tracking-wider transition-all border ${
                             revealedCertTitles[ach.title]
                               ? 'bg-emerald-500 text-black border-emerald-400 shadow-md'
                               : 'bg-emerald-500/10 border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/20'
@@ -284,7 +284,7 @@ export default function Education() {
                         {/* Fullscreen Modal View Button */}
                         <button
                           onClick={() => handleOpenCert(ach)}
-                          className="inline-flex items-center space-x-1.5 px-3 py-2.5 bg-zinc-950 border border-white/10 text-zinc-300 hover:text-white hover:border-emerald-500/50 font-mono text-[11px] font-bold uppercase tracking-wider transition-all"
+                          className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] space-x-1.5 px-3 py-2.5 bg-zinc-950 border border-white/10 text-zinc-300 hover:text-white hover:border-emerald-500/50 font-mono text-[11px] font-bold uppercase tracking-wider transition-all"
                           aria-label="Open certificate in fullscreen viewer"
                         >
                           <Eye className="w-3.5 h-3.5 text-emerald-400" />

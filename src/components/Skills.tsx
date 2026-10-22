@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Sparkles,
   Layers,
@@ -97,7 +97,17 @@ const iconMap: { [key: string]: React.ComponentType<any> } = {
 export default function Skills() {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [showAll, setShowAll] = useState<boolean>(false);
-  const COLLAPSED_COUNT = 12;
+  // Phones get a shorter list up front; the rest is behind "Show all skills".
+  const [isPhone, setIsPhone] = useState<boolean>(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 639px)').matches,
+  );
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 639px)');
+    const onChange = () => setIsPhone(mq.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+  const COLLAPSED_COUNT = isPhone ? 6 : 12;
 
   const categories = [
     { id: 'all', label: 'All Skills' },

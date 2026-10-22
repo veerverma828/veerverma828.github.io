@@ -311,15 +311,15 @@ export const projects: Project[] = [
     id: 'media-streamer',
     title: 'Media Discovery and Streaming Platform',
     category: 'AI Systems',
-    description: 'An AI-powered media intelligence platform integrating LLM content summarization, semantic search, torrent discovery, and debounced query management.',
+    description: 'An AI-powered media intelligence platform integrating LLM content summarization, semantic search, multi-source content lookup, and debounced query management.',
     liveUrl: 'https://torrent-gamma.vercel.app',
     githubUrl: 'https://github.com/veerverma828/Media-discovery-streaming-platform',
     tags: ['LLM Summarization', 'Vector Search', 'React', 'Node.js', 'Express', 'TMDb API'],
     keyHighlights: [
       'AI-driven content recommendations & episode intelligence',
       'Debounced semantic query pipeline optimizing API calls',
-      'Torrent aggregation & automated metadata extraction',
-      'Real-time streaming source resolution',
+      'Multi-source aggregation & automated metadata extraction',
+      'Real-time source resolution',
       'Smart IMDb & rating analytics integration',
       'High-performance responsive UI'
     ],

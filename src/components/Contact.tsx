@@ -180,7 +180,7 @@ export default function Contact() {
                     type="button"
                     onClick={handleCopyEmail}
                     aria-label={copiedEmail ? 'Email address copied' : 'Copy email address'}
-                    className="shrink-0 min-h-[40px] px-3 flex items-center gap-1.5 text-[11px] font-mono font-bold uppercase bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition-colors cursor-pointer"
+                    className="shrink-0 min-h-[44px] px-3 flex items-center gap-1.5 text-[11px] font-mono font-bold uppercase bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition-colors cursor-pointer"
                   >
                     {copiedEmail ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{copiedEmail ? 'Copied' : 'Copy'}</span>
@@ -437,7 +437,7 @@ export default function Contact() {
                         <button
                           type="button"
                           onClick={handleOpenGmail}
-                          className="text-emerald-400 hover:underline hover:text-emerald-300 font-bold uppercase tracking-wider flex items-center space-x-1 cursor-pointer bg-transparent border-0 p-0"
+                          className="text-emerald-400 hover:underline hover:text-emerald-300 font-bold uppercase tracking-wider flex items-center space-x-1 min-h-[44px] cursor-pointer bg-transparent border-0 px-1"
                         >
                           <Mail className="w-3 h-3" />
                           <span>Compose in Gmail</span>

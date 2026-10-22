@@ -48,6 +48,24 @@ export default function BotCompanion() {
     }
   });
   const [heroInView, setHeroInView] = useState(true);
+  // On phones the docked bot would sit on top of the text being read, so it steps aside while scrolling
+  // and settles back into the corner once scrolling stops.
+  const [scrolling, setScrolling] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 639px)');
+    let timer: number | undefined;
+    const onScroll = () => {
+      if (!mq.matches) return;
+      setScrolling(true);
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => setScrolling(false), 700);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.clearTimeout(timer);
+    };
+  }, []);
   const [hint, setHint] = useState<string | null>(null);
 
   // Show only after the hero (which already has the big bot) leaves the viewport.
@@ -132,9 +150,10 @@ export default function BotCompanion() {
         <motion.div
           ref={wrapRef}
           initial={{ opacity: 0, y: 40, scale: 0.8 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
+          animate={{ opacity: scrolling ? 0 : 1, y: scrolling ? 24 : 0, scale: 1 }}
           exit={{ opacity: 0, y: 40, scale: 0.8 }}
           transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+          style={{ pointerEvents: scrolling ? 'none' : 'auto' }}
           className="fixed bottom-3 right-3 md:bottom-4 md:right-4 z-40"
         >
           {/* Hint bubble */}
@@ -147,7 +166,7 @@ export default function BotCompanion() {
                 exit={{ opacity: 0, x: 10 }}
                 transition={{ duration: 0.2 }}
                 aria-hidden="true"
-                className="absolute right-full mr-3 bottom-4 md:bottom-5 w-max max-w-[170px] md:max-w-[220px] px-3 py-2 bg-zinc-900 border border-emerald-500/40 text-[11px] md:text-xs font-mono text-zinc-100 shadow-xl"
+                className="hidden sm:block absolute right-full mr-3 bottom-4 md:bottom-5 w-max max-w-[170px] md:max-w-[220px] px-3 py-2 bg-zinc-900 border border-emerald-500/40 text-[11px] md:text-xs font-mono text-zinc-100 shadow-xl"
               >
                 {hint}
                 <span className="absolute top-1/2 -right-[5px] w-2.5 h-2.5 -translate-y-1/2 rotate-45 bg-zinc-900 border-r border-t border-emerald-500/40" />
@@ -160,7 +179,7 @@ export default function BotCompanion() {
             onClick={jumpToContact}
             aria-label="Contact Veer Verma"
             title="Say hello"
-            className="group block w-[80px] h-[80px] md:w-[92px] md:h-[92px] rounded-full overflow-hidden border border-emerald-500/40 hover:border-emerald-400 bg-zinc-950/85 backdrop-blur shadow-[0_10px_40px_-10px_rgba(16,185,129,0.5)] cursor-pointer transition-colors"
+            className="group block w-[64px] h-[64px] md:w-[92px] md:h-[92px] rounded-full overflow-hidden border border-emerald-500/40 hover:border-emerald-400 bg-zinc-950/85 backdrop-blur shadow-[0_10px_40px_-10px_rgba(16,185,129,0.5)] cursor-pointer transition-colors"
           >
             <Canvas
               dpr={[1, 1.5]}
