@@ -154,7 +154,7 @@ export default function BotCompanion() {
           exit={{ opacity: 0, y: 40, scale: 0.8 }}
           transition={{ type: 'spring', stiffness: 260, damping: 24 }}
           style={{ pointerEvents: scrolling ? 'none' : 'auto' }}
-          className="fixed bottom-[68px] right-3 md:bottom-20 md:right-4 z-40"
+          className="bot-dock fixed bottom-3 right-3 md:bottom-4 md:right-4 z-40"
         >
           {/* Hint bubble */}
           <AnimatePresence>

@@ -211,3 +211,8 @@ main > section#contact { contain-intrinsic-size: auto 801px; }
   main > section#tech-stack { contain-intrinsic-size: auto 850px; }
   main > section#contact { contain-intrinsic-size: auto 1503px; }
 }
+
+/* The docked bot steps up while the WhatsApp button is showing in the corner. */
+.bot-dock { transition: bottom 0.25s ease; }
+html[data-wa] .bot-dock { bottom: 68px; }
+@media (min-width: 768px) { html[data-wa] .bot-dock { bottom: 80px; } }
