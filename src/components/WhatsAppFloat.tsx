@@ -28,7 +28,7 @@ function useNearContact() {
     };
   }, []);
 
-  // Lets the docked bot step up out of the corner while the button is showing.
+  // Lets the docked bot hide while the button is showing, so the two never share the corner.
   useEffect(() => {
     document.documentElement.toggleAttribute('data-wa', near);
     return () => document.documentElement.removeAttribute('data-wa');

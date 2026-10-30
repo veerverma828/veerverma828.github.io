@@ -212,7 +212,6 @@ main > section#contact { contain-intrinsic-size: auto 801px; }
   main > section#contact { contain-intrinsic-size: auto 1503px; }
 }
 
-/* The docked bot steps up while the WhatsApp button is showing in the corner. */
-.bot-dock { transition: bottom 0.25s ease; }
-html[data-wa] .bot-dock { bottom: 68px; }
-@media (min-width: 768px) { html[data-wa] .bot-dock { bottom: 80px; } }
+/* The docked bot gets out of the way while the WhatsApp button owns the corner. */
+.bot-dock { transition: opacity 0.2s ease, visibility 0.2s; }
+html[data-wa] .bot-dock { opacity: 0; visibility: hidden; pointer-events: none; }

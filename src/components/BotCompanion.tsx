@@ -200,9 +200,9 @@ export default function BotCompanion() {
             type="button"
             onClick={dismiss}
             aria-label="Hide assistant"
-            className="absolute -top-1 -right-1 md:top-0 md:right-0 w-8 h-8 md:w-7 md:h-7 rounded-full flex items-center justify-center bg-zinc-900 border border-white/15 text-zinc-300 hover:text-white hover:border-emerald-500/60 cursor-pointer transition-colors"
+            className="absolute -top-4 -right-2 w-6 h-6 rounded-full before:absolute before:-inset-2.5 before:content-[''] flex items-center justify-center bg-zinc-900 border border-white/15 text-zinc-300 hover:text-white hover:border-emerald-500/60 cursor-pointer transition-colors"
           >
-            <X className="w-3.5 h-3.5" />
+            <X className="w-3 h-3" />
           </button>
         </motion.div>
       )}
