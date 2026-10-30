@@ -10,6 +10,7 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import Footer from './components/Footer';
 import ResumeModal from './components/ResumeModal';
+import WhatsAppFloat from './components/WhatsAppFloat';
 import ScrollProgress from './components/ui/ScrollProgress';
 import AgentCursor from './components/ui/AgentCursor';
 import { useAfterReveal } from './hooks/useAfterReveal';
@@ -78,6 +79,8 @@ export default function App() {
       </main>
 
       <Footer />
+
+      <WhatsAppFloat />
 
       <ResumeModal isOpen={resumeOpen} onClose={() => setResumeOpen(false)} />
 
