@@ -131,7 +131,7 @@ export default function Hero({ onOpenResume }: HeroProps) {
               transition={{ duration: 0.5, delay: 0.25 }}
               className="text-lg sm:text-xl font-semibold text-zinc-200"
             >
-              I build <RotatingText className="text-emerald-400" words={['full-stack web apps', 'REST APIs & backends', 'RAG systems & agents', 'LLM integrations & MCP tools']} />
+              I build <RotatingText className="text-emerald-400" words={['AI full-stack web apps', 'REST APIs & backends', 'RAG systems & agents', 'LLM integrations & MCP tools']} />
             </motion.p>
 
             <motion.p
