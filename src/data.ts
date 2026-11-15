@@ -487,7 +487,7 @@ export const timelineEvents: TimelineEvent[] = [
     year: '2025',
     title: 'Graduation & Full-Stack + GenAI Career',
     subtitle: 'Full-Stack + GenAI Milestone',
-    description: 'Graduated B.Tech CSE(DS) with 7.72 CGPA. Focused core specialization on Full-Stack and GenAI development—building multi-agent systems, RAG pipelines, and LLM integrations.',
+    description: 'Graduated B.Tech CSE(DS) with 7.72 CGPA. Focused core specialization on GenAI and Full-Stack development—building multi-agent systems, RAG pipelines, and LLM integrations.',
     icon: 'CheckCircle',
     type: 'milestone'
   }

@@ -153,7 +153,7 @@ export default function Hero({ onOpenResume }: HeroProps) {
                 <span className="absolute inline-flex h-full w-full animate-ping bg-emerald-400 opacity-60" />
                 <span className="relative inline-flex h-2.5 w-2.5 bg-emerald-500" />
               </span>
-              Open to Full-Stack and GenAI roles
+              Open to GenAI and Full-Stack roles
             </motion.div>
 
             {/* CTA Actions */}
@@ -249,7 +249,7 @@ export default function Hero({ onOpenResume }: HeroProps) {
 
             {/* Center Brand Tag */}
             <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 px-4 py-2.5 bg-zinc-950 border border-white/10 rounded-none text-center shadow-2xl z-20">
-              <span className="text-[11px] font-black tracking-widest text-emerald-500 uppercase font-mono block">FULL-STACK + GENAI</span>
+              <span className="text-[11px] font-black tracking-widest text-emerald-500 uppercase font-mono block">GENAI + FULL-STACK</span>
               <span className="text-[11px] tracking-wide text-zinc-400 uppercase block">Web &amp; AI</span>
             </div>
           </motion.div>

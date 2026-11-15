@@ -67,7 +67,7 @@ export default function About() {
               </div>
               <figcaption className="px-1 sm:px-2 pt-3 sm:pt-4 pb-1 sm:pb-2">
                 <p className="text-sm sm:text-xl font-bold text-white tracking-tight">{personalInfo.name}</p>
-                <p className="mt-1 text-[11px] sm:text-sm leading-snug text-zinc-300">Full-Stack &amp; GenAI Developer</p>
+                <p className="mt-1 text-[11px] sm:text-sm leading-snug text-zinc-300">GenAI &amp; Full-Stack Developer</p>
                 <p className="mt-0.5 text-[11px] sm:text-sm text-zinc-400">{personalInfo.location}</p>
                 <p className="mt-3 sm:mt-4 inline-flex items-center gap-2 bg-zinc-950 border border-white/10 px-2 sm:px-3 py-1 sm:py-1.5 text-[11px] font-mono text-zinc-100">
                   <span className="relative flex h-2 w-2" aria-hidden="true">
@@ -112,7 +112,7 @@ export default function About() {
                   <p><span className="text-zinc-400">▸ Passionate_About:</span> ['Autonomous Agents', 'RAG & Vector Search', 'LLM Applications']</p>
                   <p><span className="text-zinc-400">▸ Code_Philosophy:</span> ['Deterministic Reliability', 'Scalable AI Pipelines']</p>
                   <p><span className="text-zinc-400">▸ Current_Focus:</span> ['Multi-Agent Workflows', 'MCP Protocol', 'Fine-Tuning']</p>
-                  <p><span className="text-zinc-400">▸ Status:</span> 'Open to Full-Stack and GenAI developer roles.'</p>
+                  <p><span className="text-zinc-400">▸ Status:</span> 'Open to GenAI and Full-Stack developer roles.'</p>
                 </div>
                 <div className="pt-2">
                   <span className="text-emerald-500">veer@ai-station</span>:<span className="text-zinc-400">~$</span> <span className="animate-pulse">▮</span>

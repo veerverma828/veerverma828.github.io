@@ -90,7 +90,7 @@ export default function Header({ onOpenResume }: HeaderProps) {
                 {personalInfo.name}
               </span>
               <span className="text-[11px] text-zinc-400 font-mono tracking-tight whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px] sm:max-w-none">
-                FULL-STACK &amp; GENAI DEVELOPER
+                GENAI &amp; FULL-STACK DEVELOPER
               </span>
             </div>
           </a>
