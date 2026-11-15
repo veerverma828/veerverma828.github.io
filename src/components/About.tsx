@@ -9,7 +9,7 @@ export default function About() {
     { label: 'CGPA', value: <CountUp to={7.72} decimals={2} />, description: 'MIET Meerut', icon: Award },
     { label: 'Degree', value: 'B.Tech CSE(DS)', description: '2021 – 2025', icon: Calendar },
     { label: 'Key Projects', value: <CountUp to={5} suffix="+" />, description: 'AI & Full Stack', icon: Star },
-    { label: 'Main Focus', value: 'Full-Stack AI', description: 'Web apps + GenAI, RAG, Agents', icon: Brain },
+    { label: 'Main Focus', value: 'AI Engineer | Full Stack', description: 'Web apps + GenAI, RAG, Agents', icon: Brain },
   ];
 
   return (
