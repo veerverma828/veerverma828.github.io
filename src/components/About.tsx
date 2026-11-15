@@ -103,7 +103,7 @@ export default function About() {
                   <span className="text-emerald-500">veer@ai-station</span>:<span className="text-zinc-400">~$</span> cat about.txt
                 </div>
                 <p className="text-zinc-400 italic">
-                  "I am a Full-Stack and GenAI developer and Computer Science graduate. I build web apps with generative AI built in: multi-agent workflows, RAG pipelines and LLM integrations, connected to robust full-stack production environments."
+                  "I'm an AI developer who ships full stack. I build web apps with generative AI built in: multi-agent workflows, RAG pipelines and LLM integrations, connected to robust full-stack production environments."
                 </p>
                 <div>
                   <span className="text-emerald-500 font-bold">veer@ai-station</span>:<span className="text-zinc-400">~$</span> ./get_info.sh
