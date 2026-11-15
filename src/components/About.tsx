@@ -129,7 +129,7 @@ export default function About() {
               <span>Education &amp; Background</span>
             </h3>
             <p className="text-zinc-300 leading-relaxed text-base max-w-prose">
-              I graduated from <span className="font-semibold text-white">MIET, Meerut</span> with a Bachelor of Technology in CSE - Data Science &amp; AI (B.Tech CSE(DS)). Over the last 4 years, I built real systems ranging from agentic code copilots to RAG discovery pipelines. I focus on high-reliability model execution, clean code, and intuitive interfaces.
+              I graduated from <span className="font-semibold text-white">MIET, Meerut</span> with a Bachelor of Technology in CSE - Data Science &amp; AI (B.Tech CSE(DS)). I focus on AI engineering and full-stack development, building intelligent coding assistants and RAG-based discovery pipelines. I prioritize reliable model execution, clean code, and intuitive user interfaces.
             </p>
 
             {/* Stats Cards */}
